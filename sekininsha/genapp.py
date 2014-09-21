@@ -1,5 +1,5 @@
 from flask import Flask
-from .extensions import db
+from .extensions import db, migrate, manager
 
 def create_app():
     app = Flask('sekininsha')
@@ -8,5 +8,9 @@ def create_app():
 
     db.init_app(app)
     app.db = db
+
+    migrate.init_app(app, db)
+    manager.app = app
+    app.manager = manager
 
     return app
