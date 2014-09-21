@@ -1,5 +1,8 @@
+from flask import request, session, redirect, url_for
+from flask_oauthlib.client import OAuthException
 from .app import app
 from .models import User
+from .eusign import eusign
 
 
 @app.route('/')
@@ -15,8 +18,31 @@ def index():
         - currently running votes where you already voted
         - results of finished votes
     """
+    if 'eusign_token' in session:
+        me = eusign.get('user')
+    else:
+        return redirect(url_for('login'))
+
     users = User.query.all()
-    return "DASHBOARD {}".format(str(list(users)))
+    return "DASHBOARD {} {}".format(str(list(users)), me.data)
+
+
+@app.route('/login')
+def login():
+    return eusign.authorize(callback=url_for('authorized', _external=True))
+
+
+@app.route('/login/authorized')
+def authorized():
+    resp = eusign.authorized_response()
+    if resp is None or isinstance(resp, (basestring, OAuthException)):
+        return 'Access denied: reason=%s error=%s' % (
+            request.args['error_reason'],
+            request.args['error_description']
+        )
+    session['eusign_token'] = (resp['access_token'], '')
+    me = eusign.get('user')
+    return "ME DATA {}".format(me.data)
 
 
 @app.route('/group/<group_id>/')
