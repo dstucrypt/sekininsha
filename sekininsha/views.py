@@ -1,4 +1,5 @@
 from .app import app
+from .models import User
 
 
 @app.route('/')
@@ -14,7 +15,8 @@ def index():
         - currently running votes where you already voted
         - results of finished votes
     """
-    return "DASHBOARD"
+    users = User.query.all()
+    return "DASHBOARD {}".format(str(list(users)))
 
 
 @app.route('/group/<group_id>/')
