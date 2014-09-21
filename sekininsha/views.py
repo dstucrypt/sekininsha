@@ -1,11 +1,13 @@
-from flask import request, session, redirect, url_for
+from flask import request, url_for, g, redirect
 from flask_oauthlib.client import OAuthException
+from flask.ext.login import login_user, logout_user, login_required, current_user
 from .app import app
 from .models import User
 from .eusign import eusign
 
 
 @app.route('/')
+@login_required
 def index():
     """Dashboard would be shown here for authenticated user.
 
@@ -18,18 +20,19 @@ def index():
         - currently running votes where you already voted
         - results of finished votes
     """
-    if 'eusign_token' in session:
-        me = eusign.get('user')
-    else:
-        return redirect(url_for('login'))
-
-    users = User.query.all()
-    return "DASHBOARD {} {}".format(str(list(users)), me.data)
+    user = current_user._get_current_object()
+    return u"DASHBOARD {}".format(user.name)
 
 
 @app.route('/login')
 def login():
     return eusign.authorize(callback=url_for('authorized', _external=True))
+
+
+@app.route('/logout')
+def logout():
+    logout_user()
+    return U"LOGGED OUT"
 
 
 @app.route('/login/authorized')
@@ -40,9 +43,19 @@ def authorized():
             request.args['error_reason'],
             request.args['error_description']
         )
-    session['eusign_token'] = (resp['access_token'], '')
+    g.eusign_token = (resp['access_token'], '')
     me = eusign.get('user')
-    return "ME DATA {}".format(me.data)
+    uniq = me.data['uniq']
+    db = app.db
+    current_user = User.query.filter_by(ipn_hash=uniq).first()
+    if current_user is None:
+        current_user = User.from_remote(me.data)
+        db.session.add(current_user)
+
+    db.session.commit()
+    login_user(current_user)
+
+    return redirect(url_for('index'))
 
 
 @app.route('/group/<group_id>/')

@@ -1,4 +1,4 @@
-from flask import session
+from flask import g
 from .app import app
 from .extensions import oauth
 
@@ -17,5 +17,5 @@ eusign = oauth.remote_app(
 
 
 @eusign.tokengetter
-def get_github_oauth_token():
-    return session.get('eusign_token')
+def get_eusign_oauth_token():
+    return g.eusign_token

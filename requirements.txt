@@ -2,3 +2,4 @@ flask
 flask-oauthlib
 Flask-SQLAlchemy
 Flask-Migrate
+Flask-Login
