@@ -70,7 +70,7 @@ def authorized(provider='eusign'):
             "ipn_hash": me.data['uniq'],
         }
         shadow_kw = {
-            "ipn": me.data['ipn'],
+            "ipn": me.data['tax_id'],
         }
     elif provider == 'fb':
         g.fb_token = (resp['access_token'], '')

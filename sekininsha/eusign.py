@@ -7,7 +7,7 @@ eusign = oauth.remote_app(
     'eusign',
     consumer_key=app.config['EUSIGN_OAUTH2_KEY'],
     consumer_secret=app.config['EUSIGN_OAUTH2_SECRET'],
-    request_token_params={'scope': 'x509'},
+    request_token_params={'scope': ['x509','tax_id']},
     base_url='https://eusign.org/api/1/',
     request_token_url=None,
     access_token_method='GET',
