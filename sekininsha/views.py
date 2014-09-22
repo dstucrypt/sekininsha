@@ -1,9 +1,20 @@
-from flask import request, url_for, g, redirect
+from flask import request, url_for, g, redirect, render_template, abort
 from flask_oauthlib.client import OAuthException
 from flask.ext.login import login_user, logout_user, login_required, current_user
 from .app import app
-from .models import User
+from .models import User, Shadow
 from .eusign import eusign
+from .fb import fb
+
+
+def rapp(name):
+    try:
+        return {
+            "fb": fb,
+            "eusign": eusign,
+        }[name]
+    except KeyError:
+        abort(400)
 
 
 @app.route('/')
@@ -26,7 +37,13 @@ def index():
 
 @app.route('/login')
 def login():
-    return eusign.authorize(callback=url_for('authorized', _external=True))
+    return render_template('login.html')
+
+
+@app.route('/login/<provider>')
+def go_login(provider):
+    remote = rapp(provider)
+    return remote.authorize(callback=url_for('authorized', provider=provider, _external=True))
 
 
 @app.route('/logout')
@@ -36,21 +53,49 @@ def logout():
 
 
 @app.route('/login/authorized')
-def authorized():
-    resp = eusign.authorized_response()
+@app.route('/login/authorized/<provider>')
+def authorized(provider='eusign'):
+    remote = rapp(provider)
+
+    resp = remote.authorized_response()
     if resp is None or isinstance(resp, (basestring, OAuthException)):
         return 'Access denied: reason=%s error=%s' % (
             request.args['error_reason'],
             request.args['error_description']
         )
-    g.eusign_token = (resp['access_token'], '')
-    me = eusign.get('user')
-    uniq = me.data['uniq']
+    if provider == 'eusign':
+        g.eusign_token = (resp['access_token'], '')
+        me = eusign.get('user')
+        filter_kw = {
+            "ipn_hash": me.data['uniq'],
+        }
+        shadow_kw = {
+            "ipn": me.data['ipn'],
+        }
+    elif provider == 'fb':
+        g.fb_token = (resp['access_token'], '')
+        me = fb.get('me')
+        if 'error' in me.data:
+            abort(400)
+
+        if 'email' not in me.data:
+            abort(400)
+
+        filter_kw = {
+            "facebook": me.data['id'],
+        }
+        shadow_kw = {
+            "email": me.data['email'],
+        }
+
     db = app.db
-    current_user = User.query.filter_by(ipn_hash=uniq).first()
+    current_user = User.query.filter_by(**filter_kw).first()
     if current_user is None:
-        current_user = User.from_remote(me.data)
+        current_user = User.from_remote(me.data, provider)
         db.session.add(current_user)
+        db.session.flush()
+
+        Shadow.update_shadows(current_user, **shadow_kw)
 
     db.session.commit()
     login_user(current_user)
