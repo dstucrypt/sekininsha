@@ -3,3 +3,4 @@
 *.sqlite
 client/node_modules/
 env
+local.cfg
