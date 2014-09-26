@@ -176,7 +176,7 @@ def group_create():
         - group visibility
         - initial members list
     """
-    return "CREATE_INTERFACE"
+    return render_template("group_create.html")
 
 
 @app.route('/group/group_id/manage')

@@ -1,2 +1,5 @@
 *.pyc
 .*swp
+*.sqlite
+client/node_modules/
+env
