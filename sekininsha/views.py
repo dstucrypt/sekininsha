@@ -1,4 +1,4 @@
-from flask import request, url_for, g, redirect, render_template, abort, Response
+from flask import request, url_for, g, redirect, render_template, abort
 from flask_oauthlib.client import OAuthException
 from flask.ext.login import login_user, logout_user, login_required, current_user
 from .app import app
@@ -214,11 +214,3 @@ def vote_create():
     """
     return "V_CREATE_INTERFACE"
 
-@app.route('/scripts/<path:js>')
-def js_hack(js):
-    if app.config['DEBUG'] is not True:
-        abort(404)
-
-    import urllib
-    resp = urllib.urlopen("http://localhost:3000/scripts/{}".format(js))
-    return Response(resp.read(), content_type="application/javascript")
