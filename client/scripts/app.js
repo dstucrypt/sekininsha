@@ -4,7 +4,8 @@ require("bootstrap/dist/css/bootstrap.min.css");
 var _ = require("underscore/underscore");
 var React = require('react/addons');
 var Cursor = require('react-cursor/src/react-cursor').Cursor;
-
+var MembersList = require('./components/MembersList');
+var MemberEditor = require('./components/MemberEditor');
 /*
 1. account
 2. who am I
@@ -17,79 +18,56 @@ var Cursor = require('react-cursor/src/react-cursor').Cursor;
     - initial members list
 */
 
-var Group = React.createClass({
-  select: function(event) {
-    this.props.selected.onChange(this.props.id);
-  },
-  render: function() {
-    return (<li key={this.props.id} onClick={this.select}>{this.props.group.refine('name').value}</li>);
-  }
-});
-
-var GroupsList = React.createClass({
-  render: function() {
-    var groupsList = [];
-
-    var groups = this.props.cursor.refine("groups");
-    var selected = this.props.cursor.refine("selected");
-
-    for (var i = 0; i < groups.value.length; i ++) {
-      groupsList.push(<Group selected={selected} group={groups.refine(i)} id={i}/>);
-    };
-
-    return (<ul>{groupsList}</ul>);
-  }
-});
-
-var GroupEditor = React.createClass({
-  updateName: function(event) {
-      this.props.group.refine('name').onChange(event.target.value);
-  },
-  render: function() {
-    if (this.props.group === null) {return null;}
-    else
-    return (
-      <div>
-        <input type="text" value={this.props.group.refine('name').value} onChange={this.updateName}></input>
-      </div>
-      )
-  }
-});
-
 var App = React.createClass({
 	getInitialState: function () {
     return {
-      groups: [{name: "group 1"}, {name:"group 2"}],
-      selected: null
-  	}
+      form_data: {
+        "title": "ttt",
+        "description": "desc",
+        "members" : [{
+          "name" : "Vasya",
+          "tax_id" : "123",
+          "email" : "" 
+       }]
+     },
+       selected_member : null
+     }
   },
-  addGroup: function(groups) {
-      var nu = groups.value;
-      nu.push({name:"Grrr"});
-      groups.onChange(nu);
+  addMember: function(members) {
+      var nu = members.value;
+      nu.push({"name":"Grrr", "tax_id":"666"});
+      members.onChange(nu);
   },
-  removeGroup: function(groups, selected) {
-      var nu = groups.value;
+  removeMember: function(members, selected) {
+      var nu = members.value;
       var s = selected.value;
       selected.onChange(null);
       nu.splice(selected.value, 1);
-      groups.onChange(nu);
+      members.onChange(nu);
+  },
+  updateTextField: function(cursor, event) {
+      cursor.onChange(event.target.value);
   },
   render: function() {
   		var cursor = Cursor.build(this);
-      var groups = cursor.refine('groups');
-      var selected = cursor.refine('selected');
-      var editor = (selected.value !== null) ? <GroupEditor group={groups.refine(selected.value)}/> : null;
+      var data = cursor.refine("form_data");
+      var title = data.refine("title");
+      var desc = data.refine("description");
+      var members = data.refine('members');
+      var selected = cursor.refine('selected_member');
+      var editor = (selected.value !== null) ? <MemberEditor group={members.refine(selected.value)}/> : null;
     	var log = function() {
-        console.log(cursor.value);
+        console.log(cursor.refine("form_data").value);
       }
       return (
       	<div className="App">
-          
-          <button onClick={this.addGroup.bind(null, groups)}>Add Group</button>
-          <button onClick={this.removeGroup.bind(null, groups, selected)} disabled={selected.value === null}>Remove Group</button>
+          <input type="text" value={title.value} onChange={this.updateTextField.bind(this, title)}></input>
+          <input type="text" value={desc.value} onChange={this.updateTextField.bind(this, desc)}></input>
 
-          <GroupsList cursor={cursor}></GroupsList>
+          <button onClick={this.addMember.bind(null, members)}>Add Member</button>
+          <button onClick={this.removeMember.bind(null, members, selected)} disabled={selected.value === null}>Remove Member</button>
+
+          <MembersList members={members} selected={selected}></MembersList>
           {editor}
           <button onClick={log}></button>
       	</div>
