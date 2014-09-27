@@ -1,6 +1,6 @@
 /** @jsx React.DOM */
 'use strict';
-
+require("bootstrap/dist/css/bootstrap.min.css");
 var _ = require("underscore/underscore");
 var React = require('react/addons');
 var Cursor = require('react-cursor/src/react-cursor').Cursor;
