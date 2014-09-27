@@ -12,9 +12,18 @@ var MemberEditor = React.createClass({
     if (this.props.group === null) {return null;}
     else
     return (
-      <div>
-        <input type="text" value={this.props.group.refine('name').value} onChange={this.updateName}></input>
-        <input type="text" value={this.props.group.refine('tax_id').value} onChange={this.updateTaxID}></input>
+      <div className="row form-inline">
+        <div className="col-md-6">
+          <div className="form-group">
+            <input type="text" className="form-control" value={this.props.group.refine('name').value} onChange={this.updateName}></input>
+          </div>
+        </div>
+        <div className="col-md-6">
+          <div className="form-group">
+            <input type="text" className="form-control" value={this.props.group.refine('tax_id').value} onChange={this.updateTaxID}></input>
+          </div>
+        </div>
+
       </div>
       )
   }

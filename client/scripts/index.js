@@ -1,5 +1,7 @@
 /** @jsx React.DOM */
 'use strict';
+require("bootstrap/dist/css/bootstrap.min.css");
+
 var React = require('react'),
     App = require('./App');
     

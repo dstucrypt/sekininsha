@@ -6,7 +6,10 @@ var MembersList = React.createClass({
   render: function() {
   	var cx = React.addons.classSet;
   	var classes = cx({
-    	'table': true
+    	'table': true,
+    	'table-striped': true,
+    	'table-bordered': true,
+    	'table-hover': true
   	});
 
     var MembersList = [];
@@ -19,7 +22,7 @@ var MembersList = React.createClass({
     };
 
     return (<table className={classes}>
-    			<thead><tr><th>Имя</th><th>ИН</th></tr></thead>
+    			<thead><tr><th style={{width:"50%"}}>Имя</th><th style={{width:"50%"}}>ИН</th></tr></thead>
     			<tbody>{MembersList}</tbody>
     		</table>);
   }

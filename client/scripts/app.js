@@ -1,6 +1,5 @@
 /** @jsx React.DOM */
 'use strict';
-require("bootstrap/dist/css/bootstrap.min.css");
 var _ = require("underscore/underscore");
 var React = require('react/addons');
 var Cursor = require('react-cursor/src/react-cursor').Cursor;
@@ -60,16 +59,36 @@ var App = React.createClass({
         console.log(cursor.refine("form_data").value);
       }
       return (
-      	<div className="App">
-          <input type="text" value={title.value} onChange={this.updateTextField.bind(this, title)}></input>
-          <input type="text" value={desc.value} onChange={this.updateTextField.bind(this, desc)}></input>
-
-          <button onClick={this.addMember.bind(null, members)}>Add Member</button>
-          <button onClick={this.removeMember.bind(null, members, selected)} disabled={selected.value === null}>Remove Member</button>
-
-          <MembersList members={members} selected={selected}></MembersList>
-          {editor}
-          <button onClick={log}></button>
+      	<div className="container-fluid">
+          <div className="row">
+            <div className="col-md-12">
+              <h3>Название группы</h3>
+              <input type="text" id="title" className="form-control" value={title.value} onChange={this.updateTextField.bind(this, title)}></input>
+            </div>
+          </div>
+          <div className="row">
+            <div className="col-md-12">
+              <h3>Описание группы</h3>
+              <textarea rows="5" id="description" className="form-control"  value={desc.value} onChange={this.updateTextField.bind(this, desc)}></textarea>
+            </div>
+          </div>
+          <div className="row">
+            <div className="col-md-12">
+              <h3>Список членов группы</h3>
+              <div className="row" style={{"padding-bottom":"9px"}}>
+                <div className="col-md-12">
+                    <button type="button" style={{"margin-right":"5px"}} className="btn btn-primary" onClick={this.addMember.bind(null, members)}>Добавить</button>
+                    <button type="button" className="btn btn-primary" onClick={this.removeMember.bind(null, members, selected)} disabled={selected.value === null}>Удалить</button>
+                </div>
+              </div>
+              <MembersList members={members} selected={selected}></MembersList>
+            </div>
+          </div>
+          <div className="row">
+            <div className="col-md-12">
+            {editor}
+            </div>
+          </div>
       	</div>
     	);
   	}
