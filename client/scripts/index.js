@@ -1,8 +1,8 @@
 /** @jsx React.DOM */
 'use strict';
-require("bootstrap/dist/css/bootstrap.min.css");
+require("bootstrap/dist/css/bootstrap.css");
 
-var React = require('react'),
+var React = require('react/addons'),
     App = require('./App');
     
 if ('production' !== process.env.NODE_ENV) {

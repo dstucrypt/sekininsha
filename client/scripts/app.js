@@ -1,8 +1,8 @@
 /** @jsx React.DOM */
 'use strict';
-var _ = require("underscore/underscore");
+var _ = require("underscore");
 var React = require('react/addons');
-var Cursor = require('react-cursor/src/react-cursor').Cursor;
+var Cursor = require('react-cursor/src/Cursor');
 var MembersList = require('./components/MembersList');
 var MemberEditor = require('./components/MemberEditor');
 /*
