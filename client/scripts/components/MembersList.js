@@ -15,10 +15,9 @@ var MembersList = React.createClass({
     var MembersList = [];
 
     var members = this.props.members;
-    var selected = this.props.selected;
 
     for (var i = 0; i < members.value.length; i ++) {
-      MembersList.push(<Member key={i} selected={selected} member={members.refine(i)} id={i}/>);
+      MembersList.push(<Member key={i} member={members.refine(i)} id={i}/>);
     };
 
     return (<table className={classes}>

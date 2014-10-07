@@ -20,14 +20,10 @@ var App = React.createClass({
 	getInitialState: function () {
     return {
       form_data: {
-        "title": "ttt",
-        "description": "desc",
-        "members" : [{
-          "name" : "Vasya",
-          "tax_id" : "1234567890",
-          "email" : "vr@gmail.com"
-        }]
-      },
+        "title": "",
+        "description": "",
+        "members" : [{}]
+      }
      };
   },
   addMember: function(members) {
@@ -45,20 +41,38 @@ var App = React.createClass({
   updateTextField: function(cursor, event) {
       cursor.onChange(event.target.value);
   },
+  submit: function() {
+      if(!this.validate()) {
+          return;
+      }
+      console.log("valid");
+  },
+  validate: function() {
+      var idx;
+      var members = this.state.form_data.members;
+      var form = this.state.form_data;
+
+      var err = false;
+      for(idx = 0; idx < members.length; idx++) {
+          err = members[idx]['has_error'] || err;
+      }
+
+      err = form.title.length < 1 || err;
+
+      return err === false;
+  },
   render: function() {
       var cursor = Cursor.build(this);
       var data = cursor.refine("form_data");
       var title = data.refine("title");
       var desc = data.refine("description");
       var members = data.refine('members');
-      var log = function() {
-        console.log(cursor.refine("form_data").value);
-      }
       var buttons = (
         <div className="row" style={{"padding-bottom":"9px"}}>
         <div className="col-md-12">
             <button type="button" style={{"margin-right":"5px"}} className="btn btn-primary" onClick={this.addMember.bind(null, members)}>Добавить</button>
             <button type="button" className="btn btn-primary" onClick={this.removeMember.bind(null, members)}>Удалить</button>
+            <button type="button" className="btn btn-primary" onClick={this.submit}>Создать группу</button>
         </div>
         </div>
       );
