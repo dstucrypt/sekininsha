@@ -4,7 +4,6 @@ var _ = require("underscore");
 var React = require('react/addons');
 var Cursor = require('react-cursor/src/Cursor');
 var MembersList = require('./components/MembersList');
-var MemberEditor = require('./components/MemberEditor');
 /*
 1. account
 2. who am I
@@ -27,35 +26,32 @@ var App = React.createClass({
           "name" : "Vasya",
           "tax_id" : "123",
           "email" : "" 
-       }]
-     },
-       selected_member : null
-     }
+        }]
+      },
+     };
   },
   addMember: function(members) {
       var nu = members.value;
       nu.push({"name":"Grrr", "tax_id":"666"});
       members.onChange(nu);
   },
-  removeMember: function(members, selected) {
+  removeMember: function(members) {
       var nu = members.value;
-      var s = selected.value;
-      selected.onChange(null);
-      nu.splice(selected.value, 1);
+      // XXX: we don't have "selected" element
+      // remove last element from list
+      nu.splice(nu.length - 1, 1);
       members.onChange(nu);
   },
   updateTextField: function(cursor, event) {
       cursor.onChange(event.target.value);
   },
   render: function() {
-  		var cursor = Cursor.build(this);
+      var cursor = Cursor.build(this);
       var data = cursor.refine("form_data");
       var title = data.refine("title");
       var desc = data.refine("description");
       var members = data.refine('members');
-      var selected = cursor.refine('selected_member');
-      var editor = (selected.value !== null) ? <MemberEditor group={members.refine(selected.value)}/> : null;
-    	var log = function() {
+      var log = function() {
         console.log(cursor.refine("form_data").value);
       }
       return (
@@ -78,15 +74,10 @@ var App = React.createClass({
               <div className="row" style={{"padding-bottom":"9px"}}>
                 <div className="col-md-12">
                     <button type="button" style={{"margin-right":"5px"}} className="btn btn-primary" onClick={this.addMember.bind(null, members)}>Добавить</button>
-                    <button type="button" className="btn btn-primary" onClick={this.removeMember.bind(null, members, selected)} disabled={selected.value === null}>Удалить</button>
+                    <button type="button" className="btn btn-primary" onClick={this.removeMember.bind(null, members)}>Удалить</button>
                 </div>
               </div>
-              <MembersList members={members} selected={selected}></MembersList>
-            </div>
-          </div>
-          <div className="row">
-            <div className="col-md-12">
-            {editor}
+              <MembersList members={members}></MembersList>
             </div>
           </div>
       	</div>
