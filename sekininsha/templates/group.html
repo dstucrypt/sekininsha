@@ -1,0 +1,17 @@
+<html>
+    <body>
+        {{group.name}}
+        <p>{% if group.description %}
+        {{group.description}}
+        {% else %}
+        <i>не указано</i>
+        {% endif %}
+        </p>
+
+        <ul>
+        {% for member in members %}
+        <li>{{member.id}} {{member.user}}</li>
+        {% endfor %}
+        </ul>
+    </body>
+</html>

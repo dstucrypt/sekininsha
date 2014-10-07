@@ -2,7 +2,7 @@ from flask import request, url_for, g, redirect, render_template, abort
 from flask_oauthlib.client import OAuthException
 from flask.ext.login import login_user, logout_user, login_required, current_user
 from .app import app
-from .models import User, Shadow
+from .models import User, Shadow, Group
 from .eusign import eusign
 from .fb import fb
 
@@ -103,7 +103,7 @@ def authorized(provider='eusign'):
     return redirect(url_for('index'))
 
 
-@app.route('/group/<group_id>/')
+@app.route('/group/<int:group_id>/')
 def group(group_id):
     """Group dashboard
 
@@ -118,7 +118,18 @@ def group(group_id):
         - last votes results
         - link to votes archive
     """
-    return "GROUP"
+    shadow = Shadow.query.filter_by(group_id=group_id,
+                                    user=current_user).first()
+    if shadow is None:
+        abort(403)
+
+    group = Group.query.filter_by(id=group_id).first()
+    if group is None:
+        abort(404)
+
+    members = Shadow.query.filter_by(group=group)
+    return render_template('group.html', group=group,
+                                         members=members)
 
 
 @app.route('/vote/<vote_id>/')

@@ -66,6 +66,7 @@ class Shadow(db.Model):
     group_id = db.Column(
         db.Integer, db.ForeignKey('groups.id', ondelete='CASCADE'), nullable=True
     )
+    group = db.relationship('Group')
 
     @classmethod
     def update_shadows(cls, user, **filter_kw):
