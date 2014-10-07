@@ -15,7 +15,7 @@ def api_group_create():
     if not current_user.is_authenticated():
         return jsonify(status='error', message="Not logged in", login_url=url_for('login'))
 
-    if not (title and desc) or not isinstance(members, list):
+    if not title or not isinstance(members, list):
         return jsonify(status='error', message="Arguments format"), 400
 
     if not all((

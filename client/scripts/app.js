@@ -4,6 +4,7 @@ var _ = require("underscore");
 var React = require('react/addons');
 var Cursor = require('react-cursor/src/Cursor');
 var MembersList = require('./components/MembersList');
+var ajax = require('./ajax');
 /*
 1. account
 2. who am I
@@ -45,7 +46,19 @@ var App = React.createClass({
       if(!this.validate()) {
           return;
       }
-      console.log("valid");
+      ajax('/api/1/group/', this.submitCB, this.state.form_data);
+  },
+  submitError: function(req, resp) {
+      if(resp && resp.login_url) {
+          window.open(resp.login_url, '_blank');
+      }
+  },
+  submitCB: function(req, resp) {
+      if(resp.status !== 'ok') {
+          return this.submitError(req, resp);
+      }
+
+      location.assign('/group/' + resp.group_id);
   },
   validate: function() {
       var idx;
