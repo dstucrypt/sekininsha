@@ -6,24 +6,31 @@ var port = JSON.parse(process.env.npm_package_config_port || 3000),
       'https://' + subdomain + '.localtunnel.me' :
       'http://localhost:' + port;
 
+var plugins = [
+    new webpack.NoErrorsPlugin()
+  ];
+
 module.exports = {
   devtool: 'eval',
-  entry: [
-    'webpack-dev-server/client?' + url,
-    'webpack/hot/only-dev-server',
-    './scripts/index'
-  ],
+  entry: {
+    "dev-serv":'webpack-dev-server/client?' + url,
+    "hot-reload":'webpack/hot/only-dev-server',
+    "bundle":'./scripts/index'
+  },
   output: {
     path: __dirname,
-    filename: 'bundle.js',
+    filename: '[name].js',
     publicPath: '/scripts/'
   },
-  plugins: [
-    new webpack.HotModuleReplacementPlugin(),
-    new webpack.NoErrorsPlugin()
-  ],
+  plugins: plugins,
   resolve: {
-    extensions: ['', '.js']
+    alias: {
+      "react/addons" : "react/dist/react-with-addons.min.js",
+      "react" : "react/dist/react-with-addons.min.js",
+    },
+    root: "/",
+    target: "web",
+    extensions: ['', '.js', '.jsx']
   },
   module: {
     loaders: [
@@ -34,6 +41,6 @@ module.exports = {
       { test: /\.eot$/,    loader: "file-loader" },
       { test: /\.svg$/,    loader: "file-loader" }
     ],
-    noParse: /\.min\.js/
+    noParse: [ /\.min\.js/, /\.dev\.js/ ]
   }
 };
