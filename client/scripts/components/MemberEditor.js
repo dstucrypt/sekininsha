@@ -38,7 +38,7 @@ var MemberEditor = React.createClass({
     }
   },
   validate: function() {
-    var mm = this.props.member.value;
+    var mm = this.props.member.pendingValue();
     var name = mm.name || "";
     var email = mm.email || "";
     var tax_id = mm.tax_id || "";

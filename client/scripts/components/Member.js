@@ -14,7 +14,7 @@ var Member = React.createClass({
     this.setState({selected: false});
   },
   isEmpty: function() {
-    var mm = this.props.member.value;
+    var mm = this.props.member.pendingValue();
     return !(mm.name || mm.email || mm.tax_id);
   },
   render: function() {

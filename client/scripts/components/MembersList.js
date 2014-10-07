@@ -15,8 +15,9 @@ var MembersList = React.createClass({
     var MembersList = [];
 
     var members = this.props.members;
+    var ml = members.pendingValue().length;
 
-    for (var i = 0; i < members.value.length; i ++) {
+    for (var i = 0; i < ml; i ++) {
       MembersList.push(<Member key={i} member={members.refine(i)} id={i}/>);
     };
 

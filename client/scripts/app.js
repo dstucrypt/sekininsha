@@ -27,12 +27,12 @@ var App = React.createClass({
      };
   },
   addMember: function(members) {
-      var nu = members.value;
+      var nu = members.pendingValue();
       nu.push({});
       members.onChange(nu);
   },
   removeMember: function(members) {
-      var nu = members.value;
+      var nu = members.pendingValue();
       // XXX: we don't have "selected" element
       // remove last element from list
       nu.splice(nu.length - 1, 1);
