@@ -76,7 +76,7 @@ var MemberEditor = React.createClass({
   },
   error: function(val) {
     this.setState({error: val});
-    this.props.member.refine('has_error').onChange(val !== false);
+    this.props.member.refine('is_ready').onChange(val === false);
   },
   render: function() {
     var err = this.state.error || {};

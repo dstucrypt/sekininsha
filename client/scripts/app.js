@@ -54,7 +54,7 @@ var App = React.createClass({
 
       var err = members.length === 0;
       for(idx = 0; idx < members.length; idx++) {
-          err = members[idx]['has_error'] || err;
+          err = !members[idx].is_ready || err;
       }
 
       err = form.title.length < 1 || err;
