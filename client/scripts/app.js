@@ -25,7 +25,7 @@ var App = React.createClass({
         "members" : [{
           "name" : "Vasya",
           "tax_id" : "123",
-          "email" : "" 
+          "email" : "vr@gmail.com"
         }]
       },
      };

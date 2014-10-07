@@ -22,7 +22,11 @@ var MembersList = React.createClass({
     };
 
     return (<table className={classes}>
-    			<thead><tr><th style={{width:"50%"}}>Имя</th><th style={{width:"50%"}}>ИН</th></tr></thead>
+               <thead><tr>
+                    <th style={{width:"33%"}}>Имя</th>
+                    <th style={{width:"33%"}}>Электронная почта</th>
+                    <th style={{width:"33%"}}>Налоговый номер</th>
+                </tr></thead>
     			<tbody>{MembersList}</tbody>
     		</table>);
   }
