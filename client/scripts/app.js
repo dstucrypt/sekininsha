@@ -5,6 +5,7 @@ var React = require('react/addons');
 var Cursor = require('react-cursor/src/Cursor');
 var MembersList = require('./components/MembersList');
 var ajax = require('./ajax');
+var validate = require('./validate');
 /*
 1. account
 2. who am I
@@ -24,7 +25,9 @@ var App = React.createClass({
         "title": "",
         "description": "",
         "members" : [{}]
-      }
+      },
+      error: null,
+      login_url: null,
      };
   },
   addMember: function(members) {
@@ -42,8 +45,8 @@ var App = React.createClass({
   updateTextField: function(cursor, event) {
       cursor.onChange(event.target.value);
   },
-  submit: function() {
-      if(!this.validate()) {
+  submit: function(data) {
+      if(!this.validate(data)) {
           return;
       }
       ajax('/api/1/group/', this.submitCB, this.state.form_data);
@@ -51,6 +54,11 @@ var App = React.createClass({
   submitError: function(req, resp) {
       if(resp && resp.login_url) {
           window.open(resp.login_url, '_blank');
+          this.setState({login_url: resp.login_url});
+      }
+
+      if(resp && resp.message) {
+          this.setState({error: resp.message});
       }
   },
   submitCB: function(req, resp) {
@@ -60,19 +68,34 @@ var App = React.createClass({
 
       location.assign('/group/' + resp.group_id);
   },
-  validate: function() {
+  validate: function(form_data) {
       var idx;
-      var members = this.state.form_data.members;
-      var form = this.state.form_data;
+      var members = form_data.refine('members').pendingValue();
+      var form = form_data.pendingValue();
 
-      var err = members.length === 0;
-      for(idx = 0; idx < members.length; idx++) {
-          err = !members[idx].is_ready || err;
+      if(members.length === 0) {
+          this.setState({error: "Добавьте в группу людей"});
+          return false;
       }
 
-      err = form.title.length < 1 || err;
+      if(form.title.length === 0) {
+          this.setState({error: "Укажите название группы"});
+          return false;
+      }
 
-      return err === false;
+      var ready = true;
+      var errors;
+      for(idx = 0; idx < members.length; idx++) {
+          errors = validate.member(members[idx]);
+          form_data.refine('members', idx, 'errors').set(errors);
+          ready = ready && Object.keys(members[idx].errors).length === 0;
+      }
+      if(!ready) {
+          this.setState({error: "Исправьте проблемы в списке"});
+          return false;;
+      }
+
+      return true;
   },
   render: function() {
       var cursor = Cursor.build(this);
@@ -85,12 +108,19 @@ var App = React.createClass({
         <div className="col-md-12">
             <button type="button" style={{"margin-right":"5px"}} className="btn btn-primary" onClick={this.addMember.bind(null, members)}>Добавить</button>
             <button type="button" className="btn btn-primary" onClick={this.removeMember.bind(null, members)}>Удалить</button>
-            <button type="button" className="btn btn-primary" onClick={this.submit}>Создать группу</button>
+            <button type="button" className="btn btn-primary" onClick={this.submit.bind(null, data)}>Создать группу</button>
         </div>
         </div>
       );
+      var loginLink = this.state.login_url ? (
+        <a href={this.state.login_url}>Login here</a>
+      ) : undefined;
+      var error = this.state.error ? (
+        <div className="alert alert-danger" role="alert">{this.state.error} {loginLink}</div>
+      ) : undefined;
       return (
       	<div className="container-fluid">
+          {error}
           <div className="row">
             <div className="col-md-12">
               <h3>Название группы</h3>

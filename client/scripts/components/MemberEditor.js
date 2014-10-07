@@ -1,6 +1,7 @@
 /** @jsx React.DOM */
 'use strict';
 var React = require('react/addons');
+var validate = require('../validate');
 
 
 var EditField = React.createClass({
@@ -32,55 +33,17 @@ var MemberEditor = React.createClass({
     if(event.key !== 'Enter') {
         return;
     }
+    var member = this.props.member;
+    var errors = validate.member(member.pendingValue());
 
-    if(this.validate() === true) {
+    member.refine('errors').onChange(errors);
+    if(Object.keys(errors).length === 0) {
         this.props.onBlur();
     }
   },
-  validate: function() {
-    var mm = this.props.member.pendingValue();
-    var name = mm.name || "";
-    var email = mm.email || "";
-    var tax_id = mm.tax_id || "";
-    var err = {};
-
-    if(tax_id.length === 0 || tax_id.length === 10) {
-        true;
-    } else {
-        err.tax_id = 'Налоговый номер неправильной длины';
-    }
-
-    if(email.length === 0 || email.indexOf('@') > 0) {
-        true;
-    } else {
-        err.email = 'Неправильный формат адреса';
-    }
-
-    if(email.length === 0 && tax_id.length === 0) {
-        err.email = 'Укажите что-нибудь';
-        err.tax_id = err.email;
-    }
-
-    if(name.length === 0) {
-        err.name = 'Введите имя';
-    }
-
-    if(Object.keys(err).length === 0) {
-        this.error(false);
-        return true;
-    }
-
-    this.error(err);
-
-    return false;
-  },
-  error: function(val) {
-    this.setState({error: val});
-    this.props.member.refine('is_ready').onChange(val === false);
-  },
   render: function() {
-    var err = this.state.error || {};
     var mm = this.props.member;
+    var err = mm.refine('errors').value || {};
 
     return (
       <tr>
