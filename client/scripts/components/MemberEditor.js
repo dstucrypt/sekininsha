@@ -1,6 +1,26 @@
 /** @jsx React.DOM */
 'use strict';
 var React = require('react/addons');
+
+
+var EditField = React.createClass({
+  updateField: function(event) {
+      this.props.data.onChange(event.target.value);
+  },
+  render: function() {
+    var err = this.props.error;
+    var errState = err ? 'has-error' : '';
+    var errSpan = err ? <span>{err}</span> : undefined;
+
+    return (
+    <td className={errState}>
+        <input type="text" className="form-control" value={this.props.data.value} onChange={this.updateField} onKeyUp={this.props.keyUp}></input>
+        {errSpan}
+    </td>);
+  }
+});
+
+
 var MemberEditor = React.createClass({
   getInitialState: function() {
       return {error: false};
@@ -15,8 +35,6 @@ var MemberEditor = React.createClass({
 
     if(this.validate() === true) {
         this.props.onBlur();
-    } else {
-        this.error(true);
     }
   },
   validate: function() {
@@ -24,47 +42,50 @@ var MemberEditor = React.createClass({
     var name = mm.name || "";
     var email = mm.email || "";
     var tax_id = mm.tax_id || "";
-    var err = [];
+    var err = {};
 
     if(tax_id.length === 0 || tax_id.length === 10) {
         true;
     } else {
-        err.push("Tax id length");
+        err.tax_id = 'Налоговый номер неправильной длины';
     }
 
     if(email.length === 0 || email.indexOf('@') > 0) {
         true;
     } else {
-        err.push("Email format invalid");
+        err.email = 'Неправильный формат адреса';
     }
 
-    if( (email.length === 0 && tax_id.length === 0) || name.length == 0) {
-        err.push("Empty form");
+    if(email.length === 0 && tax_id.length === 0) {
+        err.email = 'Укажите что-нибудь';
+        err.tax_id = err.email;
     }
 
-    if(err.length === 0) {
+    if(name.length === 0) {
+        err.name = 'Введите имя';
+    }
+
+    if(Object.keys(err).length === 0) {
         this.error(false);
         return true;
     }
 
-    return err;
+    this.error(err);
+
+    return false;
   },
   error: function(val) {
     this.setState({error: val});
   },
   render: function() {
-    var fieldState = this.state.error ? 'has-error' : '';
+    var err = this.state.error || {};
+    var mm = this.props.member;
+
     return (
       <tr>
-        <td className={fieldState}>
-            <input type="text" className="form-control" value={this.props.member.refine('name').value} onChange={this.updateField.bind(this, 'name')} onKeyUp={this.keyUp}></input>
-        </td>
-        <td className={fieldState}>
-            <input type="text" className="form-control" value={this.props.member.refine('email').value} onChange={this.updateField.bind(null, 'email')} onKeyUp={this.keyUp}></input>
-        </td>
-        <td className={fieldState}>
-            <input type="text" className="form-control" value={this.props.member.refine('tax_id').value} onChange={this.updateField.bind(null, 'tax_id')} onKeyUp={this.keyUp}></input>
-        </td>
+        <EditField data={mm.refine('name')} error={err.name} keyUp={this.keyUp} />
+        <EditField data={mm.refine('email')} error={err.email} keyUp={this.keyUp} />
+        <EditField data={mm.refine('tax_id')} error={err.tax_id} keyUp={this.keyUp} />
       </tr>
       )
   }
