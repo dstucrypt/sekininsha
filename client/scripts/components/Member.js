@@ -5,16 +5,17 @@ var MemberEditor = require('./MemberEditor');
 
 var Member = React.createClass({
   getInitialState: function() {
-    return {selected: false};
+    return {selected: this.isEmpty()};
   },
   select: function(event) {
     this.setState({selected: true});
   },
-  keyPress: function(event) {
-    console.log(event);
-  },
   unselect: function(event) {
     this.setState({selected: false});
+  },
+  isEmpty: function() {
+    var mm = this.props.member.value;
+    return !(mm.name || mm.email || mm.tax_id);
   },
   render: function() {
     if(this.state.selected === true) {

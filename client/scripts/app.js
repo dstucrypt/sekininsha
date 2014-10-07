@@ -24,7 +24,7 @@ var App = React.createClass({
         "description": "desc",
         "members" : [{
           "name" : "Vasya",
-          "tax_id" : "123",
+          "tax_id" : "1234567890",
           "email" : "vr@gmail.com"
         }]
       },
@@ -32,7 +32,7 @@ var App = React.createClass({
   },
   addMember: function(members) {
       var nu = members.value;
-      nu.push({"name":"Grrr", "tax_id":"666"});
+      nu.push({});
       members.onChange(nu);
   },
   removeMember: function(members) {
@@ -54,6 +54,14 @@ var App = React.createClass({
       var log = function() {
         console.log(cursor.refine("form_data").value);
       }
+      var buttons = (
+        <div className="row" style={{"padding-bottom":"9px"}}>
+        <div className="col-md-12">
+            <button type="button" style={{"margin-right":"5px"}} className="btn btn-primary" onClick={this.addMember.bind(null, members)}>Добавить</button>
+            <button type="button" className="btn btn-primary" onClick={this.removeMember.bind(null, members)}>Удалить</button>
+        </div>
+        </div>
+      );
       return (
       	<div className="container-fluid">
           <div className="row">
@@ -71,13 +79,9 @@ var App = React.createClass({
           <div className="row">
             <div className="col-md-12">
               <h3>Список членов группы</h3>
-              <div className="row" style={{"padding-bottom":"9px"}}>
-                <div className="col-md-12">
-                    <button type="button" style={{"margin-right":"5px"}} className="btn btn-primary" onClick={this.addMember.bind(null, members)}>Добавить</button>
-                    <button type="button" className="btn btn-primary" onClick={this.removeMember.bind(null, members)}>Удалить</button>
-                </div>
-              </div>
+              {buttons}
               <MembersList members={members}></MembersList>
+              {buttons}
             </div>
           </div>
       	</div>
