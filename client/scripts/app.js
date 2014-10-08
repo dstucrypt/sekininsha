@@ -150,7 +150,6 @@ var App = React.createClass({
             <div className="col-md-12">
               <h3>Список членов группы</h3>
               {buttons}
-              <div>{this.state.selected}</div>
               <MembersList onMemberSelect={this.setSelectedMember} members={members}></MembersList>
               {buttons}
             </div>

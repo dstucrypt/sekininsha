@@ -26,7 +26,7 @@ var Member = React.createClass({
     }
     return (
     	<tr onClick={this.beginEdit}>
-            <td>{this.props.mid}</td>
+            <td>{this.props.mid + 1}</td>
             <td>{this.props.member.refine('name').value}</td>
             <td>{this.props.member.refine('email').value}</td>
             <td>{this.props.member.refine('tax_id').value}</td>

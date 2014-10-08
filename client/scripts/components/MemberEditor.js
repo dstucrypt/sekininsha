@@ -47,7 +47,7 @@ var MemberEditor = React.createClass({
 
     return (
       <tr>
-        <td>{this.props.mid}</td>
+        <td>{this.props.mid + 1}</td>
         <EditField onSelect={this.props.onSelect} data={mm.refine('name')} error={err.name} keyUp={this.keyUp} />
         <EditField onSelect={this.props.onSelect} data={mm.refine('email')} error={err.email} keyUp={this.keyUp} />
         <EditField onSelect={this.props.onSelect} data={mm.refine('tax_id')} error={err.tax_id} keyUp={this.keyUp} />
