@@ -71,6 +71,7 @@ class Group(db.Model):
 
 class Shadow(db.Model):
     __tablename__ = 'shadow'
+    name = db.Column(db.String, index=False)
 
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(
@@ -85,6 +86,27 @@ class Shadow(db.Model):
     )
     group = db.relationship('Group')
 
+    def export_for(self, role='member'):
+        base = {
+            "name": self.name,
+            "user_id": self.user_id,
+        }
+        if role == 'admin':
+            extended = {
+                "ipn": self.ipn,
+                "email": self.email,
+            }
+        elif role == 'member':
+            extended = {
+                "have_eusign": self.ipn is not None,
+                "have_facebook": self.email is not None,
+            }
+
+        ret = base
+        ret.update(extended)
+        return ret
+
+
     @classmethod
     def update_shadows(cls, user, **filter_kw):
         for shadow in cls.query.filter_by(**filter_kw):
@@ -92,4 +114,7 @@ class Shadow(db.Model):
                 continue
 
             shadow.user = user
+            shadow.name = user.name
             db.session.add(shadow)
+
+        cls.query.filter_by(**filter_kw).update({"name": user.name})
