@@ -33,7 +33,7 @@ def api_group_create():
     db.session.flush()
     for member in members:
         shadow = Shadow(email=member.get('email'),
-                        ipn=member.get('ipn'),
+                        ipn=member.get('tax_id'),
                         group=group)
         db.session.add(shadow)
 
