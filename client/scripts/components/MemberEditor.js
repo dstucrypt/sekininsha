@@ -6,7 +6,7 @@ var validate = require('../validate');
 
 var EditField = React.createClass({
   updateField: function(event) {
-      this.props.data.onChange(event.target.value);
+      this.props.data.set(event.target.value);
   },
   render: function() {
     var err = this.props.error;
@@ -15,7 +15,7 @@ var EditField = React.createClass({
 
     return (
     <td className={errState}>
-        <input type="text" className="form-control" value={this.props.data.value} onChange={this.updateField} onKeyUp={this.props.keyUp}></input>
+        <input onFocus={this.props.onSelect} type="text" className="form-control" value={this.props.data.pendingValue()} onChange={this.updateField} onKeyUp={this.props.keyUp}></input>
         {errSpan}
     </td>);
   }
@@ -36,7 +36,7 @@ var MemberEditor = React.createClass({
     var member = this.props.member;
     var errors = validate.member(member.pendingValue());
 
-    member.refine('errors').onChange(errors);
+    member.refine('errors').set(errors);
     if(Object.keys(errors).length === 0) {
         this.props.onBlur();
     }
@@ -47,9 +47,10 @@ var MemberEditor = React.createClass({
 
     return (
       <tr>
-        <EditField data={mm.refine('name')} error={err.name} keyUp={this.keyUp} />
-        <EditField data={mm.refine('email')} error={err.email} keyUp={this.keyUp} />
-        <EditField data={mm.refine('tax_id')} error={err.tax_id} keyUp={this.keyUp} />
+        <td>{this.props.mid}</td>
+        <EditField onSelect={this.props.onSelect} data={mm.refine('name')} error={err.name} keyUp={this.keyUp} />
+        <EditField onSelect={this.props.onSelect} data={mm.refine('email')} error={err.email} keyUp={this.keyUp} />
+        <EditField onSelect={this.props.onSelect} data={mm.refine('tax_id')} error={err.tax_id} keyUp={this.keyUp} />
       </tr>
       )
   }

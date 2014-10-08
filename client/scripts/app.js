@@ -28,6 +28,7 @@ var App = React.createClass({
       },
       error: null,
       login_url: null,
+      selected: null
      };
   },
   addMember: function(members) {
@@ -37,10 +38,16 @@ var App = React.createClass({
   },
   removeMember: function(members) {
       var nu = members.pendingValue();
+      if (this.state.selected !== null) {
+        nu.splice(this.state.selected, 1);
+      } else {
+        nu.splice(nu.length - 1, 1);
+      }
       // XXX: we don't have "selected" element
       // remove last element from list
-      nu.splice(nu.length - 1, 1);
-      members.onChange(nu);
+      members.set(nu);
+      this.setState({selected: null});
+
   },
   updateTextField: function(cursor, event) {
       cursor.onChange(event.target.value);
@@ -67,6 +74,10 @@ var App = React.createClass({
       }
 
       location.assign('/group/' + resp.group_id);
+  },
+  setSelectedMember: function(member) {
+      console.log(member);
+      this.setState({selected: member});
   },
   validate: function(form_data) {
       var idx;
@@ -137,7 +148,8 @@ var App = React.createClass({
             <div className="col-md-12">
               <h3>Список членов группы</h3>
               {buttons}
-              <MembersList members={members}></MembersList>
+              <div>{this.state.selected}</div>
+              <MembersList onMemberSelect={this.setSelectedMember} members={members}></MembersList>
               {buttons}
             </div>
           </div>

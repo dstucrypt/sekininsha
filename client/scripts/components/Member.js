@@ -5,24 +5,28 @@ var MemberEditor = require('./MemberEditor');
 
 var Member = React.createClass({
   getInitialState: function() {
-    return {selected: this.isEmpty()};
+    return {editing: this.isEmpty()};
   },
-  select: function(event) {
-    this.setState({selected: true});
+  beginEdit: function(event) {
+    this.setState({editing: true});
   },
-  unselect: function(event) {
-    this.setState({selected: false});
+  endEdit: function(event) {
+    this.setState({editing: false});
   },
   isEmpty: function() {
     var mm = this.props.member.pendingValue();
     return !(mm.name || mm.email || mm.tax_id);
   },
+  onSelect: function() {
+    this.props.onSelect(this.props.mid);
+  },
   render: function() {
-    if(this.state.selected === true) {
-        return <MemberEditor member={this.props.member} onBlur={this.unselect} />
+    if(this.state.editing === true) {
+        return <MemberEditor mid={this.props.mid} onSelect={this.onSelect} member={this.props.member} onBlur={this.endEdit} />
     }
     return (
-    	<tr onClick={this.select}>
+    	<tr onClick={this.beginEdit}>
+            <td>{this.props.mid}</td>
             <td>{this.props.member.refine('name').value}</td>
             <td>{this.props.member.refine('email').value}</td>
             <td>{this.props.member.refine('tax_id').value}</td>

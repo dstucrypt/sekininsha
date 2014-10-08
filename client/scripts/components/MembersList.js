@@ -18,11 +18,12 @@ var MembersList = React.createClass({
     var ml = members.pendingValue().length;
 
     for (var i = 0; i < ml; i ++) {
-      MembersList.push(<Member key={i} member={members.refine(i)} id={i}/>);
+      MembersList.push(<Member onSelect={this.props.onMemberSelect} member={members.refine(i)} mid={i}/>);
     };
 
     return (<table className={classes}>
                <thead><tr>
+                    <th>#</th>
                     <th style={{width:"33%"}}>Имя</th>
                     <th style={{width:"33%"}}>Электронная почта</th>
                     <th style={{width:"33%"}}>Налоговый номер</th>
