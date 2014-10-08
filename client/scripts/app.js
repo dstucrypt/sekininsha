@@ -79,7 +79,6 @@ var App = React.createClass({
       location.assign('/group/' + resp.group_id);
   },
   setSelectedMember: function(member) {
-      console.log(member);
       this.setState({selected: member});
   },
   validate: function(form_data) {
@@ -106,7 +105,7 @@ var App = React.createClass({
       }
       if(!ready) {
           this.setState({error: "Исправьте проблемы в списке"});
-          return false;;
+          return false;
       }
 
       return true;
