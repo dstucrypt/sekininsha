@@ -77,7 +77,7 @@ class Shadow(db.Model):
     @classmethod
     def update_shadows(cls, user, **filter_kw):
         for shadow in cls.query.filter_by(**filter_kw):
-            if shadow.user_id is None:
+            if shadow.user_id is not None:
                 continue
 
             shadow.user = user
