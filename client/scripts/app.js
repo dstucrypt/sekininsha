@@ -88,7 +88,7 @@ var App = React.createClass({
       for(idx = 0; idx < members.length; idx++) {
           errors = validate.member(members[idx]);
           form_data.refine('members', idx, 'errors').set(errors);
-          ready = ready && Object.keys(members[idx].errors).length === 0;
+          ready = ready && Object.keys(errors).length === 0;
       }
       if(!ready) {
           this.setState({error: "Исправьте проблемы в списке"});
@@ -107,7 +107,7 @@ var App = React.createClass({
         <div className="row" style={{"padding-bottom":"9px"}}>
         <div className="col-md-12">
             <button type="button" style={{"margin-right":"5px"}} className="btn btn-primary" onClick={this.addMember.bind(null, members)}>Добавить</button>
-            <button type="button" className="btn btn-primary" onClick={this.removeMember.bind(null, members)}>Удалить</button>
+            <button type="button" style={{"margin-right":"5px"}} className="btn btn-primary" onClick={this.removeMember.bind(null, members)}>Удалить</button>
             <button type="button" className="btn btn-primary" onClick={this.submit.bind(null, data)}>Создать группу</button>
         </div>
         </div>
