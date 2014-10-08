@@ -4,24 +4,17 @@ var React = require('react/addons');
 var MemberEditor = require('./MemberEditor');
 
 var Member = React.createClass({
-  getInitialState: function() {
-    return {editing: this.isEmpty()};
-  },
   beginEdit: function(event) {
-    this.setState({editing: true});
+    this.props.member.refine('editing').set(true);
   },
   endEdit: function(event) {
-    this.setState({editing: false});
-  },
-  isEmpty: function() {
-    var mm = this.props.member.pendingValue();
-    return !(mm.name || mm.email || mm.tax_id);
+    this.props.member.refine('editing').set(false);
   },
   onSelect: function() {
     this.props.onSelect(this.props.mid);
   },
   render: function() {
-    if(this.state.editing === true) {
+    if(this.props.member.refine('editing').value === true) {
         return <MemberEditor mid={this.props.mid} onSelect={this.onSelect} member={this.props.member} onBlur={this.endEdit} />
     }
     return (

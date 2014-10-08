@@ -20,7 +20,10 @@ var validate = require('./validate');
 
 var App = React.createClass({
   makeMemberData: function() {
-    return {key: "member" + Number(new Date()).toString()};  
+    return {
+        key: "member" + Number(new Date()).toString(),
+        editing: true,
+    };
   },
 	getInitialState: function () {
     return {
