@@ -4,7 +4,8 @@ from .extensions import db, login_manager
 class User(db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
-    ipn_hash = db.Column(db.String(32), nullable=True, index=True)
+    ipn_hash = db.Column(db.String(64), nullable=True, index=True)
+    ipn = db.Column(db.String(10), nullable=True, index=True)
     facebook = db.Column(db.String(20), nullable=True, index=True)
     email = db.Column(db.String, nullable=True, index=True)
     active = db.Column(db.Boolean, default=True)
