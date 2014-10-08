@@ -19,12 +19,15 @@ var validate = require('./validate');
 */
 
 var App = React.createClass({
+  makeMemberData: function() {
+    return {key: "member" + Number(new Date()).toString()};  
+  },
 	getInitialState: function () {
     return {
       form_data: {
         "title": "",
         "description": "",
-        "members" : [{}]
+        "members" : [this.makeMemberData()]
       },
       error: null,
       login_url: null,
@@ -33,7 +36,7 @@ var App = React.createClass({
   },
   addMember: function(members) {
       var nu = members.pendingValue();
-      nu.push({});
+      nu.push(this.makeMemberData());
       members.onChange(nu);
   },
   removeMember: function(members) {

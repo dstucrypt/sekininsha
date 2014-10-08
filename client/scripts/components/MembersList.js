@@ -18,7 +18,9 @@ var MembersList = React.createClass({
     var ml = members.pendingValue().length;
 
     for (var i = 0; i < ml; i ++) {
-      MembersList.push(<Member onSelect={this.props.onMemberSelect} member={members.refine(i)} mid={i}/>);
+      var member = members.refine(i);
+      var k = member.value.key;
+      MembersList.push(<Member onSelect={this.props.onMemberSelect} member={members.refine(i)} mid={i} key={k}/>);
     };
 
     return (<table className={classes}>
