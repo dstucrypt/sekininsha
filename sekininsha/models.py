@@ -16,7 +16,6 @@ class User(db.Model):
         return self.active
 
     def get_id(self):
-        print 'my id', self.id
         return self.id
 
     def is_anonymous(self):
