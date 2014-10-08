@@ -7,8 +7,7 @@ fb = oauth.remote_app(
     'fb',
     consumer_key=app.config['FB_OAUTH2_KEY'],
     consumer_secret=app.config['FB_OAUTH2_SECRET'],
-    request_token_params={},
-
+    request_token_params={'scope': 'email'},
     base_url='https://graph.facebook.com',
     request_token_url=None,
     access_token_url='/oauth/access_token',
