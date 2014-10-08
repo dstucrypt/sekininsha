@@ -32,7 +32,13 @@ def index():
         - results of finished votes
     """
     user = current_user._get_current_object()
-    return u"DASHBOARD {}".format(user.name)
+    groups = set([
+        shadow.group
+        for shadow in
+        Shadow.query.filter_by(user=user)
+    ])
+    groups |= set(Group.query.filter_by(owner=user))
+    return render_template('dashboard.html', user=user, groups=groups)
 
 
 @app.route('/login')
@@ -104,6 +110,7 @@ def authorized(provider='eusign'):
 
 
 @app.route('/group/<int:group_id>/')
+@login_required
 def group(group_id):
     """Group dashboard
 

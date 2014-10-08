@@ -1,0 +1,7 @@
+Hello {{ user.name }}
+
+<ul>
+{% for group in groups %}
+<li><a href="{{ url_for('group', group_id=group.id) }}">{{ group.name }}</a> {{ group.can_admin and "A" }}</li>
+{% endfor %}
+</ul>

@@ -1,3 +1,4 @@
+from flask.ext.login import current_user
 from .extensions import db, login_manager
 
 
@@ -51,6 +52,10 @@ class Group(db.Model):
 
     name = db.Column(db.Text())
     description = db.Column(db.Text())
+
+    @property
+    def can_admin(self):
+        return self.owner_id == current_user.id
 
 
 class Shadow(db.Model):
