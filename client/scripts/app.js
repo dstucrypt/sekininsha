@@ -107,7 +107,7 @@ var App = React.createClass({
         <div className="row" style={{"padding-bottom":"9px"}}>
         <div className="col-md-12">
             <button type="button" style={{"margin-right":"5px"}} className="btn btn-primary" onClick={this.addMember.bind(null, members)}>Добавить</button>
-            <button type="button" className="btn btn-primary" onClick={this.removeMember.bind(null, members)}>Удалить</button>
+            <button type="button" style={{"margin-right":"5px"}} className="btn btn-primary" onClick={this.removeMember.bind(null, members)}>Удалить</button>
             <button type="button" className="btn btn-primary" onClick={this.submit.bind(null, data)}>Создать группу</button>
         </div>
         </div>
