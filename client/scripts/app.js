@@ -88,7 +88,7 @@ var App = React.createClass({
       for(idx = 0; idx < members.length; idx++) {
           errors = validate.member(members[idx]);
           form_data.refine('members', idx, 'errors').set(errors);
-          ready = ready && Object.keys(members[idx].errors).length === 0;
+          ready = ready && Object.keys(errors).length === 0;
       }
       if(!ready) {
           this.setState({error: "Исправьте проблемы в списке"});
