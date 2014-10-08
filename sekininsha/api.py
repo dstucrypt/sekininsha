@@ -1,6 +1,6 @@
 from flask import jsonify, request, url_for
 from flask.ext.login import current_user
-from .models import Group, Shadow
+from .models import Group, Shadow, User
 
 from . app import app
 
@@ -32,9 +32,12 @@ def api_group_create():
     db.session.add(group)
     db.session.flush()
     for member in members:
-        shadow = Shadow(email=member.get('email'),
-                        ipn=member.get('tax_id'),
-                        group=group)
+        email, tax_id = member.get('email'), member.get('tax_id')
+        shadow = Shadow(
+            ipn=tax_id, email=email,
+            group=group,
+            user=User.resolve(tax_id, email),
+        )
         db.session.add(shadow)
 
     shadow = Shadow(email=current_user.email,

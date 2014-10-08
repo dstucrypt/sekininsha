@@ -26,13 +26,25 @@ class User(db.Model):
         return True
 
     @classmethod
+    def resolve(cls, tax_id=None, email=None, **kwargs):
+        rett, rete = None, None
+        if tax_id is not None:
+            rett = cls.query.filter_by(ipn=tax_id).first()
+
+        if email is not None:
+            rete = cls.query.filter_by(email=email).first()
+
+        return rett or rete
+
+    @classmethod
     def load_user(cls, user_id):
         return User.query.filter_by(id=int(user_id)).first()
 
     @classmethod
     def from_remote(cls, data, provider):
         if provider == 'eusign':
-            return cls(name=data['name'], ipn_hash=data['uniq'])
+            return cls(name=data['name'], ipn_hash=data['uniq'],
+                       ipn=data['tax_id'])
         elif provider == 'fb':
             return cls(name=data['name'], facebook=data['id'],
                        email=data['email'])

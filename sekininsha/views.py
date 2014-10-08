@@ -101,7 +101,7 @@ def authorized(provider='eusign'):
         db.session.add(current_user)
         db.session.flush()
 
-        Shadow.update_shadows(current_user, **shadow_kw)
+    Shadow.update_shadows(current_user, **shadow_kw)
 
     db.session.commit()
     login_user(current_user)
