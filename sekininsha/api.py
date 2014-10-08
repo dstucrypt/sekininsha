@@ -115,3 +115,23 @@ def api_group_members_read(group_id):
             for member in members
         ]
     )
+
+
+@app.route('/api/1/group/<int:group_id>')
+@login_required
+def api_group_read(group_id):
+    shadow = Shadow.query.filter_by(group_id=group_id,
+                                    user=current_user).first()
+    if shadow is None:
+        return jsonify(status='fail', code='EACCESS'), 403
+
+    group = shadow.group
+    role = 'admin' if group.can_admin else 'member'
+
+    return jsonify(
+        my_role=role,
+        owner_id=group.owner_id,
+        owner_name=group.owner.name,
+        title=group.name,
+        description=group.description,
+    )
