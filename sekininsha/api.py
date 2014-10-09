@@ -16,6 +16,25 @@ def login_required(f):
     return check_login
 
 
+def validate_members(members):
+    return all((
+        member.get('email') or member.get('tax_id')
+        for member in members
+    ))
+
+
+def add_members(group_id, members):
+    for member in members:
+        email, tax_id = member.get('email'), member.get('tax_id')
+        name = member.get('name')
+        user = User.resolve(tax_id, email)
+        yield Shadow(
+            name=user.name if user else name,
+            ipn=tax_id, email=email,
+            group_id=group_id, user=user,
+        )
+
+
 @app.route('/api/1/group/', methods=['POST'])
 @login_required
 def api_group_create():
@@ -34,26 +53,14 @@ def api_group_create():
     if not title or not isinstance(members, list):
         return jsonify(status='error', message="Arguments format"), 400
 
-    if not all((
-        member.get('email') or member.get('tax_id')
-        for member in members
-    )):
+    if not validate_members(members):
         return jsonify(status='error', message='Member format'), 400
 
     group = Group(owner_id=current_user.id,
                   name=title, description=desc)
     db.session.add(group)
     db.session.flush()
-    for member in members:
-        email, tax_id = member.get('email'), member.get('tax_id')
-        name = member.get('name')
-        user = User.resolve(tax_id, email)
-        shadow = Shadow(
-            name=user.name if user else name,
-            ipn=tax_id, email=email,
-            group=group, user=user,
-        )
-        db.session.add(shadow)
+    map(db.session.add, add_members(group.id, members))
 
     shadow = Shadow(email=current_user.email,
                     ipn=current_user.ipn,
@@ -114,6 +121,63 @@ def api_group_members_read(group_id):
         members=[
             member.export_for(role)
             for member in members
+        ]
+    )
+
+
+@app.route('/api/1/group/<int:group_id>/members', methods=['POST'])
+@login_required
+def api_group_members_append(group_id):
+    db = app.db
+    data = request.json
+    if data is None:
+        return "ZABORONENO! Send json to this API.", 415
+
+    shadow = Shadow.query.filter_by(group_id=group_id,
+                                    user=current_user).first()
+    if shadow is None or not shadow.group.can_admin:
+        return jsonify(status='fail', code='EACCESS'), 403
+
+    emails, taxids = set(), set()
+    shadows = list(Shadow.query.filter_by(group_id=group_id))
+    for shadow in shadows:
+        if shadow.email:
+            emails.add(shadow.email)
+        if shadow.ipn:
+            taxids.add(shadow.ipn)
+
+    members = data.get('members')
+    if not isinstance(members, list):
+        return jsonify(status='error', message="Arguments format"), 400
+
+    if not validate_members(members):
+        return jsonify(status='error', message='Member format'), 400
+    fail = False
+    for member in members:
+        member['errors'] = {}
+        if member.get('tax_id') and member['tax_id'] in taxids:
+            member['errors']['tax_id'] = 'DUP TAXID'
+            fail = True
+        if member.get('email') and member['email'] in emails:
+            member['errors']['email'] = 'DUP EMAIL'
+            fail = True
+
+    if fail:
+        return jsonify(
+            status='fail',
+            members=members
+        )
+
+    new_shadows = list(add_members(group_id, members))
+    map(db.session.add, new_shadows)
+
+    db.session.commit()
+
+    return jsonify(
+        status='ok',
+        members=[
+            member.export_for('admin')
+            for member in shadows + new_shadows
         ]
     )
 

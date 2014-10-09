@@ -17,17 +17,33 @@ var GroupEdit = React.createClass({
             pending_members: [],
         };
     },
+    setMemberKeys: function(members) {
+        var idx, member;
+        for(idx=0; idx < members.length; idx++) {
+            member = members[idx];
+            member.key = 'member-' + idx.toString() + (member.user_id || Number(new Date()));
+        }
+        return members;
+    },
     haveMembers: function(req, resp) {
-        if(resp && resp.status !== 'ok') {
+        if(!resp || (resp && resp.status !== 'ok')) {
             return;
         }
 
-        var idx, member;
-        for(idx=0; idx < resp.members.length; idx++) {
-            member = resp.members[idx];
-            member.key = 'member-' + (member.user_id || Number(new Date()));
-        }
+        this.setMemberKeys(resp.members);
         this.setState({members: resp.members});
+    },
+    changedMembers: function(req, resp) {
+        if(resp && resp.status === 'fail' && resp.members) {
+            this.setState({pending_members: this.setMemberKeys(resp.members)});
+        }
+        if(!resp || (resp && resp.status !== 'ok')) {
+            console.log("append fail");
+            return;
+        }
+
+        this.setMemberKeys(resp.members);
+        this.setState({members: resp.members, pending_members: []});
     },
     componentWillMount: function() {
         ajax('/api/1/group/' + this.props.params.groupId + '/members', this.haveMembers);
@@ -58,7 +74,7 @@ var GroupEdit = React.createClass({
             return;
         }
 
-        console.log("submit to server", this.state.pending_members);
+        ajax('/api/1/group/' + this.props.params.groupId + '/members', this.changedMembers, {members: this.state.pending_members});
     },
 	render: function() {
         var cursor = Cursor.build(this);
