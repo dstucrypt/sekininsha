@@ -25,7 +25,10 @@ var Button = require('react-bootstrap/Button');
 
 var App = React.createClass({
   makeMemberData: function() {
-    return {key: "member" + Number(new Date()).toString()};  
+    return {
+        key: "member" + Number(new Date()).toString(),
+        editing: true,
+    };
   },
 	getInitialState: function () {
     return {
@@ -84,7 +87,6 @@ var App = React.createClass({
       location.assign('/group/' + resp.group_id);
   },
   setSelectedMember: function(member) {
-      console.log(member);
       this.setState({selected: member});
   },
   validate: function(form_data) {
@@ -111,7 +113,7 @@ var App = React.createClass({
       }
       if(!ready) {
           this.setState({error: "Исправьте проблемы в списке"});
-          return false;;
+          return false;
       }
 
       return true;
@@ -156,7 +158,6 @@ var App = React.createClass({
             <Col md={12}>
               <h3>Список членов группы</h3>
               {buttons}
-              <div>{this.state.selected}</div>
               <MembersList onMemberSelect={this.setSelectedMember} members={members}></MembersList>
             </Col>
           </Row>
