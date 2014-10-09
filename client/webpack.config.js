@@ -22,9 +22,7 @@ module.exports = {
   plugins: plugins,
   resolve: {
     alias: {
-      "react/addons" : "react/dist/react-with-addons.min.js",
-      "react" : "react/dist/react-with-addons.min.js",
-    },
+      },
     root: "/",
     target: "web",
     extensions: ['', '.js', '.jsx']
@@ -32,7 +30,7 @@ module.exports = {
   module: {
     loaders: [
       { test: /\.css$/, loader: "style-loader!css-loader" },
-      { test: /\.js$/, loaders: ['react-hot', 'jsx?harmony'] },
+      { test: /\.js$/, loaders: ['jsx'] },
       { test: /\.woff$/,   loader: "url-loader?limit=10000&minetype=application/font-woff" },
       { test: /\.ttf$/,    loader: "file-loader" },
       { test: /\.eot$/,    loader: "file-loader" },
