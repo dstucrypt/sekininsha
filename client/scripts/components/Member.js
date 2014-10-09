@@ -11,6 +11,7 @@ var Member = React.createClass({
     this.props.member.refine('editing').set(false);
   },
   onSelect: function() {
+    if(this.props.onSelect === undefined) return;
     this.props.onSelect(this.props.mid);
   },
   render: function() {

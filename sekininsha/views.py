@@ -31,14 +31,7 @@ def index():
         - currently running votes where you already voted
         - results of finished votes
     """
-    user = current_user._get_current_object()
-    groups = set([
-        shadow.group
-        for shadow in
-        Shadow.query.filter_by(user=user)
-    ])
-    groups |= set(Group.query.filter_by(owner=user))
-    return render_template('dashboard.html', user=user, groups=groups)
+    return render_template('group_create.html')
 
 
 @app.route('/login')
@@ -134,9 +127,7 @@ def group(group_id):
     if group is None:
         abort(404)
 
-    members = Shadow.query.filter_by(group=group)
-    return render_template('group.html', group=group,
-                                         members=members)
+    return render_template('group_create.html')
 
 
 @app.route('/vote/<vote_id>/')

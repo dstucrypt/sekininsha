@@ -93,7 +93,7 @@ class Shadow(db.Model):
         }
         if role == 'admin':
             extended = {
-                "ipn": self.ipn,
+                "tax_id": self.ipn,
                 "email": self.email,
             }
         elif role == 'member':

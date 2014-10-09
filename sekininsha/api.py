@@ -109,6 +109,7 @@ def api_group_members_read(group_id):
     members = Shadow.query.filter_by(group_id=group_id)
     role = 'admin' if shadow.group.can_admin else 'member'
     return jsonify(
+        status='ok',
         my_role=role,
         members=[
             member.export_for(role)
@@ -129,9 +130,33 @@ def api_group_read(group_id):
     role = 'admin' if group.can_admin else 'member'
 
     return jsonify(
+        status='ok',
         my_role=role,
         owner_id=group.owner_id,
         owner_name=group.owner.name,
         title=group.name,
         description=group.description,
+    )
+
+
+@app.route('/api/1/group/')
+@login_required
+def group_list():
+    user = current_user._get_current_object()
+    groups = [
+        shadow.group
+        for shadow in
+        Shadow.query.filter_by(user=user)
+    ]
+
+    return jsonify(
+        status='ok',
+        groups=[
+            {
+                "group_id": group.id,
+                "name": group.name,
+                "can_admin": group.can_admin,
+            }
+            for group in groups
+        ]
     )
