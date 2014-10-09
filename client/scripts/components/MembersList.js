@@ -13,16 +13,20 @@ var MembersList = React.createClass({
     for (var i = 0; i < ml; i ++) {
       var member = members.refine(i);
       var k = member.value.key;
-      MembersList.push(<Member onSelect={this.props.onMemberSelect} member={members.refine(i)} mid={i} key={k}/>);
+      MembersList.push(<Member onSelect={this.props.onMemberSelect} member={members.refine(i)} mid={i + (this.props.from_id || 0)} key={k}/>);
     };
 
-    return (<Table striped bordered hover>
-               <thead><tr>
+    var theader = this.props.from_id ? undefined : (
+        <thead><tr>
                     <th>#</th>
                     <th style={{width:"33%"}}>Имя</th>
                     <th style={{width:"33%"}}>Электронная почта</th>
                     <th style={{width:"33%"}}>Налоговый номер</th>
-                </tr></thead>
+        </tr></thead>
+    );
+
+    return (<Table striped bordered hover>
+                {theader}
     			<tbody>{MembersList}</tbody>
     		</Table>);
   }

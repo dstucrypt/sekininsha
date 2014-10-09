@@ -41,9 +41,18 @@ function validateAll(mm, err) {
 }
 
 
-var member = function(mm) {
+var member = function(mm, force) {
     var err = {};
-    validateAll(mm, err);
+    var data;
+    if(force) {
+        data = {};
+        data.name = mm.name || "";
+        data.email = mm.email || "";
+        data.tax_id = mm.tax_id || "";
+    } else {
+        data = mm;
+    }
+    validateAll(data, err);
     return err;
 };
 

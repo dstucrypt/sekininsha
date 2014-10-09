@@ -107,7 +107,7 @@ var App = React.createClass({
       var ready = true;
       var errors;
       for(idx = 0; idx < members.length; idx++) {
-          errors = validate.member(members[idx]);
+          errors = validate.member(members[idx], true);
           form_data.refine('members', idx, 'errors').set(errors);
           ready = ready && Object.keys(errors).length === 0;
       }
