@@ -11,10 +11,7 @@ var plugins = [
   ];
 
 module.exports = {
-  devtool: 'eval',
   entry: {
-    "dev-serv":'webpack-dev-server/client?' + url,
-    "hot-reload":'webpack/hot/only-dev-server',
     "bundle":'./scripts/index'
   },
   output: {

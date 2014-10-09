@@ -2,11 +2,13 @@
 'use strict';
 var React = require('react/addons');
 var validate = require('../validate');
+var _ = require("underscore");
 
 
 var EditField = React.createClass({
   updateField: function(event) {
-      this.props.data.set(event.target.value);
+     this.props.data.set(event.target.value);
+     this.props.validate(event.target.value);
   },
   render: function() {
     var err = this.props.error;
@@ -15,7 +17,7 @@ var EditField = React.createClass({
 
     return (
     <td className={errState}>
-        <input onFocus={this.props.onSelect} type="text" className="form-control" value={this.props.data.pendingValue()} onChange={this.updateField} onKeyUp={this.props.keyUp}></input>
+        <input onFocus={this.props.onSelect} type="text" className="form-control" value={this.props.data.pendingValue()} onChange={this.updateField}></input>
         {errSpan}
     </td>);
   }
@@ -26,20 +28,10 @@ var MemberEditor = React.createClass({
   getInitialState: function() {
       return {error: false};
   },
-  updateField: function(field, event) {
-      this.props.member.refine(field).onChange(event.target.value);
-  },
-  keyUp: function(event) {
-    if(event.key !== 'Enter') {
-        return;
-    }
+  validate: function(field, value) {
     var member = this.props.member;
-    var errors = validate.member(member.pendingValue());
-
-    member.refine('errors').set(errors);
-    if(Object.keys(errors).length === 0) {
-        this.props.onBlur();
-    }
+    var newErrors = validate.member(member.pendingValue());
+    member.refine('errors').set(newErrors);
   },
   render: function() {
     var mm = this.props.member;
@@ -48,9 +40,9 @@ var MemberEditor = React.createClass({
     return (
       <tr>
         <td>{this.props.mid}</td>
-        <EditField onSelect={this.props.onSelect} data={mm.refine('name')} error={err.name} keyUp={this.keyUp} />
-        <EditField onSelect={this.props.onSelect} data={mm.refine('email')} error={err.email} keyUp={this.keyUp} />
-        <EditField onSelect={this.props.onSelect} data={mm.refine('tax_id')} error={err.tax_id} keyUp={this.keyUp} />
+        <EditField onSelect={this.props.onSelect} data={mm.refine('name')} error={err.name} validate={this.validate.bind(this, 'name')} />
+        <EditField onSelect={this.props.onSelect} data={mm.refine('email')} error={err.email} validate={this.validate.bind(this, 'email')} />
+        <EditField onSelect={this.props.onSelect} data={mm.refine('tax_id')} error={err.tax_id} validate={this.validate.bind(this, 'tax_id')} />
       </tr>
       )
   }
