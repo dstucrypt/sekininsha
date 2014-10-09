@@ -6,6 +6,11 @@ var Cursor = require('react-cursor/src/Cursor');
 var MembersList = require('./components/MembersList');
 var ajax = require('./ajax');
 var validate = require('./validate');
+var Grid = require('react-bootstrap/Grid');
+var Row = require('react-bootstrap/Row');
+var Col = require('react-bootstrap/Col');
+var Button = require('react-bootstrap/Button');
+
 /*
 1. account
 2. who am I
@@ -118,13 +123,13 @@ var App = React.createClass({
       var desc = data.refine("description");
       var members = data.refine('members');
       var buttons = (
-        <div className="row" style={{"padding-bottom":"9px"}}>
-        <div className="col-md-12">
-            <button type="button" style={{"margin-right":"5px"}} className="btn btn-primary" onClick={this.addMember.bind(null, members)}>Добавить</button>
-            <button type="button" style={{"margin-right":"5px"}} className="btn btn-primary" onClick={this.removeMember.bind(null, members)}>Удалить</button>
-            <button type="button" className="btn btn-primary" onClick={this.submit.bind(null, data)}>Создать группу</button>
-        </div>
-        </div>
+        <Row style={{"padding-bottom":"9px"}}>
+          <Col md={12}>
+              <Button bsStyle="primary" style={{"margin-right":"5px"}} onClick={this.addMember.bind(null, members)}>Добавить</Button>
+              <Button bsStyle="primary" style={{"margin-right":"5px"}} onClick={this.removeMember.bind(null, members)}>Удалить</Button>
+              <Button bsStyle="primary" onClick={this.submit.bind(null, data)}>Создать группу</Button>
+          </Col>
+        </Row>
       );
       var loginLink = this.state.login_url ? (
         <a href={this.state.login_url}>Login here</a>
@@ -133,30 +138,30 @@ var App = React.createClass({
         <div className="alert alert-danger" role="alert">{this.state.error} {loginLink}</div>
       ) : undefined;
       return (
-      	<div className="container-fluid">
+      	<Grid>
           {error}
-          <div className="row">
-            <div className="col-md-12">
+          <Row>
+            <Col md={12}>
               <h3>Название группы</h3>
               <input type="text" id="title" className="form-control" value={title.value} onChange={this.updateTextField.bind(this, title)}></input>
-            </div>
-          </div>
-          <div className="row">
-            <div className="col-md-12">
+            </Col>
+          </Row>
+          <Row>
+            <Col md={12}>
               <h3>Описание группы</h3>
               <textarea rows="5" id="description" className="form-control"  value={desc.value} onChange={this.updateTextField.bind(this, desc)}></textarea>
-            </div>
-          </div>
-          <div className="row">
-            <div className="col-md-12">
+            </Col>
+          </Row>
+          <Row>
+            <Col md={12}>
               <h3>Список членов группы</h3>
               {buttons}
               <div>{this.state.selected}</div>
               <MembersList onMemberSelect={this.setSelectedMember} members={members}></MembersList>
-              {buttons}
-            </div>
-          </div>
-      	</div>
+            </Col>
+          </Row>
+          {buttons}
+      	</Grid>
     	);
   	}
 });
