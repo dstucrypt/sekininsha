@@ -23,18 +23,32 @@ var VoteCreate = React.createClass({
         cursor.onChange(event.target.value);
     },
     validate: function(data) {
-        return data && false;
+        var vote = data.pendingValue();
+        if(!vote.title || vote.title.length === 0) {
+            return false;
+        }
+
+        if(!vote.description || vote.description.length === 0) {
+            return false;
+        }
+
+        return true;
     },
     submit: function(data) {
         if(!this.validate(data)) {
             return this.setState({error: "EFORM"});
         }
-        ajax('/api/1/vote/', this.submitCB, data.pendingValue());
+        var send = {}, form = data.pendingValue();
+        send.title = form.title;
+        send.description = form.description;
+        send.group_id = this.props.params.groupId;
+        ajax('/api/1/vote/', this.submitCB, send);
     },
     submitCB: function(req, resp) {
-        if(!resp || resp.status === 'ok') {
-            this.setState({error: "EVOTE"});
+        if(!resp || resp.status !== 'ok') {
+            return this.setState({error: "EVOTE"});
         }
+        location.assign('/vote/' + resp.vote_id);
     },
     render: function() {
         var cursor = Cursor.build(this);

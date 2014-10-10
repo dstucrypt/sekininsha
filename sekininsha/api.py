@@ -1,7 +1,7 @@
 from functools import wraps
 from flask import jsonify, request, url_for
 from flask.ext.login import current_user
-from .models import Group, Shadow, User
+from .models import Group, Shadow, User, Vote
 
 from . app import app
 
@@ -224,4 +224,44 @@ def group_list():
             }
             for group in groups
         ]
+    )
+
+
+@app.route('/api/1/vote/', methods=['POST'])
+@login_required
+def api_vote_create():
+    data = request.json
+    db = app.db
+    if data is None:
+        return "ZABORONENO! Send json to this API.", 415
+
+    title = data.get('title')
+    desc = data.get('description')
+    group_id = data.get('group_id')
+
+    if not isinstance(title, basestring):
+        return jsonify(status='fail', message='Title is mandatory')
+    if not isinstance(desc, basestring):
+        return jsonify(status='fail', message='Description should be string')
+
+    try:
+        group_id = int(group_id)
+    except (ValueError, TypeError):
+        return jsonify(status='fail', message='Invalid group id')
+
+    shadow = Shadow.query.filter_by(group_id=group_id,
+                                    user=current_user).first()
+    if shadow is None:
+        return jsonify(status='fail', code='EACCESS'), 403
+
+    vote = Vote(group_id=group_id,
+                owner_id=current_user.id,
+                name=title,
+                description=desc)
+    db.session.add(vote)
+    db.session.commit()
+
+    return jsonify(
+        status='ok',
+        vote_id=vote.id
     )

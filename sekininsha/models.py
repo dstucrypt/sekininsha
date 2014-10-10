@@ -1,3 +1,4 @@
+import datetime
 from flask.ext.login import current_user
 from .extensions import db, login_manager
 
@@ -118,3 +119,25 @@ class Shadow(db.Model):
             db.session.add(shadow)
 
         cls.query.filter_by(**filter_kw).update({"name": user.name})
+
+
+class Vote(db.Model):
+    __tablename__ = 'vote'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.Text())
+    description = db.Column(db.Text())
+    group_id = db.Column(
+        db.Integer, db.ForeignKey('groups.id', ondelete='CASCADE'), nullable=True
+    )
+    group = db.relationship('Group')
+    owner_id = db.Column(
+        db.Integer, db.ForeignKey('users.id', ondelete='CASCADE')
+    )
+    owner = db.relationship('User')
+
+    state = db.Column(db.Integer, default=0)
+    result = db.Column(db.Integer, nullable=True)
+
+    ctime = db.Column(db.DateTime, default=datetime.datetime.now())
+    etime = db.Column(db.DateTime, nullable=True)
+    dtime = db.Column(db.DateTime, nullable=True)
