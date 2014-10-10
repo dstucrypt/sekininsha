@@ -6,6 +6,7 @@ var React = require('react/addons'),
     GroupCreate = require('./GroupCreate'),
     GroupEdit = require('./GroupEdit'),
     GroupCtx = require('./GroupCtx'),
+    VoteCreate = require('./VoteCreate'),
     Dashboard = require('./Dashboard');
 
 
@@ -28,6 +29,7 @@ var routes = (
       <Route name="group_create" path="/group/create" handler={GroupCreate}/>
       <Route name="group_ctx" path="/group/:groupId/" handler={GroupCtx}/>
       <Route name="group_edit" path="/group/:groupId/members" handler={GroupEdit}/>
+      <Route name="vote_create" path="/group/:groupId/vote/create" handler={VoteCreate}/>
     </Route>
   </Routes>
 );

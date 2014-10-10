@@ -24,6 +24,9 @@ var GroupCtx = React.createClass({
     componentWillMount: function() {
         ajax('/api/1/group/' + this.props.params.groupId, this.haveGroup);
     },
+    canSubmitVote: function() {
+        return true;
+    },
     render: function() {
         var gid = this.state.group.group_id;
         var editlink = (this.state.group.my_role === 'admin') ? (
@@ -32,10 +35,13 @@ var GroupCtx = React.createClass({
         if(gid === undefined) {
             return (<span>loading</span>);
         }
+        var votelink = this.canSubmitVote() ? (
+            <Link to="vote_create" params={{groupId: gid}}>Create vote</Link>
+        ) : undefined;
         return (
             <div>
             <h1>{this.state.group.title}</h1>
-            {editlink}
+            <span>{editlink}</span> <span>{votelink}</span>
             </div>
         );
     },
