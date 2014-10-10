@@ -207,7 +207,7 @@ def group_manage():
 
 
 @app.route('/group/<group_id>/vote/create')
-def vote_create():
+def vote_create(group_id):
     """Vote creation interface
 
     This page should have interface to select:
@@ -221,5 +221,5 @@ def vote_create():
         - vote manager (defaults to current user or group admin)
         - child groups that can participate
     """
-    return "V_CREATE_INTERFACE"
+    return render_template('group_create.html')
 
