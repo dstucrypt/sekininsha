@@ -1,6 +1,5 @@
 /** @jsx React.DOM */
 'use strict';
-var _ = require("underscore");
 var React = require('react/addons');
 var Cursor = require('react-cursor/src/Cursor');
 var ajax = require('./ajax');

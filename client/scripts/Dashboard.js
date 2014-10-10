@@ -35,7 +35,7 @@ var Dashboard = React.createClass({
             if(group.can_admin) {
                 can_admin = <span>*</span>
             }
-            groups.push(<li><Link to="group_edit" params={{groupId: group.group_id}}>{group.name}</Link> {can_admin}</li>);
+            groups.push(<li><Link to="group_ctx" params={{groupId: group.group_id}}>{group.name}</Link> {can_admin}</li>);
         }
 
         return (<div>

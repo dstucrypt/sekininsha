@@ -14,8 +14,8 @@ module.exports = function (url, cb, data) {
     if(data) {
         req.setRequestHeader('Content-Type', 'application/json');
     }
-    req.onerror = cb.bind(req);
-    req.ontimeout = cb.bind(req);
+    req.onerror = cb.bind(null, req);
+    req.ontimeout = cb.bind(null, req);
     req.onload = resp_done.bind(null, cb, req);
     req.send(JSON.stringify(data));
 };

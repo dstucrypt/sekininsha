@@ -195,6 +195,7 @@ def api_group_read(group_id):
 
     return jsonify(
         status='ok',
+        group_id=group.id,
         my_role=role,
         owner_id=group.owner_id,
         owner_name=group.owner.name,
