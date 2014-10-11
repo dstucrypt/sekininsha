@@ -265,3 +265,32 @@ def api_vote_create():
         status='ok',
         vote_id=vote.id
     )
+
+
+@app.route('/api/1/vote/')
+@login_required
+def api_vote_list():
+    user = current_user._get_current_object()
+    group_id = request.args.get('group_id')
+    if group_id:
+        try:
+            group_id = int(group_id)
+        except ValueError:
+            return jsonify(status='faile', message='group_id value not int'), 400
+
+        shadow = Shadow.query.filter_by(group_id=group_id,
+                                        user=current_user).first()
+        if shadow is None:
+            return jsonify(status='fail', code='EACCESS'), 403
+
+        q = Vote.query.filter_by(group_id=group_id)
+    else:
+        q = Vote.query.join(
+            Shadow,
+            Vote.group_id == Shadow.group_id).filter(
+                Shadow.user_id == user.id
+        )
+    return jsonify(
+        status='ok',
+        vote=[vote.export() for vote in q]
+    )

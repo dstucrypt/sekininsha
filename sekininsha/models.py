@@ -141,3 +141,10 @@ class Vote(db.Model):
     ctime = db.Column(db.DateTime, default=datetime.datetime.now())
     etime = db.Column(db.DateTime, nullable=True)
     dtime = db.Column(db.DateTime, nullable=True)
+
+    def export(self):
+        return {
+            "vote_id": self.id,
+            "title": self.name,
+            "group_id": self.group_id,
+        }
