@@ -2,7 +2,7 @@ from flask import request, url_for, g, redirect, render_template, abort
 from flask_oauthlib.client import OAuthException
 from flask.ext.login import login_user, logout_user, login_required, current_user
 from .app import app
-from .models import User, Shadow, Group
+from .models import User, Shadow, Group, Vote
 from .eusign import eusign
 from .fb import fb
 
@@ -160,7 +160,17 @@ def vote(vote_id):
         - vote results (for completed votes)
         - link to vote protocol (detailed page with names, signs etc)
     """
-    return "VOTE"
+    vote = Vote.query.filter_by(id=vote_id).first()
+    if not vote:
+        abort(404)
+
+    shadow = Shadow.query.filter_by(group_id=vote.group_id,
+                                    user=current_user).first()
+    if shadow is None:
+        abort(404)
+
+    return render_template('group_create.html')
+
 
 
 @app.route('/vote/<vote_id>/opinion/<opinion_id>/')
