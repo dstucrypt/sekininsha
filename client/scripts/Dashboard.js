@@ -2,9 +2,12 @@
 'use strict';
 
 var React = require('react/addons'),
-    Router = require('react-router');
+    Router = require('react-router'),
+    ListGroup = require('react-bootstrap').ListGroup,
+    ListGroupLink = require('./ListGroupLink'),
+    Row = require('react-bootstrap/Row');
 
-var Link = Router.Link;
+var ButtonLink = require('./ButtonLink');
 
 var ajax = require('./ajax');
 
@@ -36,16 +39,15 @@ var Dashboard = React.createClass({
             if(group.can_admin) {
                 can_admin = (<span>*</span>);
             }
-            groups.push(<li key={key} ><Link to="group_ctx" params={{groupId: group.group_id}}>{group.name}</Link> {can_admin}</li>);
+            groups.push(<ListGroupLink key={key} to="group_ctx" params={{groupId: group.group_id}}>{group.name} <span>{can_admin}</span></ListGroupLink>);
         }
 
-        return (<div>
-			        <ul>
-                      <li><Link to="dashboard">Dash</Link></li>
-			          <li><Link to="group_create">Создать группу</Link></li>
-                      {groups}
-			        </ul>
-		     	 </div>);
+        return (
+            <Row>
+                <ListGroup>groups}</ListGroup>
+                <ButtonLink to="group_create">Создать группу</ButtonLink>
+            </Row>
+                );
     }
 });
 
