@@ -24,13 +24,13 @@ var App = React.createClass({
       <div>
       <Navbar>
         <Nav>
-          <NavItemLink to="/" key={1}>Dashboard</NavItemLink>
-          <NavItemLink to="/group/create" key={2}>Create Group</NavItemLink>
+          <NavItemLink to="dashboard" key={1}>Dashboard</NavItemLink>
+          <NavItemLink to="group_create" key={2}>Create Group</NavItemLink>
         </Nav>
       </Navbar>
       <this.props.activeRouteHandler />
       </div>
-            );
+      );
     }
 })
 
