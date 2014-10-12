@@ -7,7 +7,11 @@ var React = require('react/addons'),
     GroupEdit = require('./GroupEdit'),
     GroupCtx = require('./GroupCtx'),
     VoteCreate = require('./VoteCreate'),
-    Dashboard = require('./Dashboard');
+    Dashboard = require('./Dashboard'),
+    Navbar = require('react-bootstrap/Navbar'),
+    Nav = require('react-bootstrap/Nav'),
+    NavItem = require('react-bootstrap/NavItem'),
+    NavItemLink = require('./NavItemLink');
 
 
 var Router = require('react-router');
@@ -16,9 +20,17 @@ var Routes = Router.Routes;
 
 var App = React.createClass({
 	render: function() {
-		return <div>
-            <this.props.activeRouteHandler />
-        </div>
+		return  (
+      <div>
+      <Navbar>
+        <Nav>
+          <NavItemLink to="/" key={1}>Dashboard</NavItemLink>
+          <NavItemLink to="/group/create" key={2}>Create Group</NavItemLink>
+        </Nav>
+      </Navbar>
+      <this.props.activeRouteHandler />
+      </div>
+            );
     }
 })
 
