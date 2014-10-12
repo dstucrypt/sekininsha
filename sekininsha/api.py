@@ -283,14 +283,32 @@ def api_vote_list():
         if shadow is None:
             return jsonify(status='fail', code='EACCESS'), 403
 
-        q = Vote.query.filter_by(group_id=group_id)
+        q = Vote.query.filter_by(group_id=group_id).enable_eagerloads(True)
     else:
         q = Vote.query.join(
             Shadow,
             Vote.group_id == Shadow.group_id).filter(
                 Shadow.user_id == user.id
-        )
+        ).enable_eagerloads(True)
     return jsonify(
         status='ok',
         vote=[vote.export() for vote in q]
+    )
+
+
+@app.route('/api/1/vote/<int:vote_id>')
+@login_required
+def api_vote_single(vote_id):
+    vote = Vote.query.filter_by(id=vote_id).first()
+    if not vote:
+        return jsonify(status='false', message='No such vote'), 404
+
+    shadow = Shadow.query.filter_by(group_id=vote.group_id,
+                                    user=current_user).first()
+    if shadow is None:
+        return jsonify(status='fail', code='EACCESS'), 403
+
+    return jsonify(
+        status='ok',
+        vote=vote.export()
     )
