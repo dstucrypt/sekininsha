@@ -147,4 +147,5 @@ class Vote(db.Model):
             "vote_id": self.id,
             "title": self.name,
             "group_id": self.group_id,
+            "group_title": self.group.name,
         }
