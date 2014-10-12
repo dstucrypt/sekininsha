@@ -12,7 +12,10 @@ var React = require('react/addons'),
     Navbar = require('react-bootstrap/Navbar'),
     Nav = require('react-bootstrap/Nav'),
     NavItem = require('react-bootstrap/NavItem'),
-    NavItemLink = require('./NavItemLink');
+    NavItemLink = require('./NavItemLink'),
+    Grid = require('react-bootstrap/Grid'),
+    Row = require('react-bootstrap/Row'),
+    PageHeader = require('react-bootstrap/PageHeader');
 
 
 var Router = require('react-router');
@@ -22,14 +25,18 @@ var Routes = Router.Routes;
 var App = React.createClass({
 	render: function() {
 		return  (
-      <div>
-      <Navbar>
-        <Nav>
-          <NavItemLink to="dashboard" key={1}>Dashboard</NavItemLink>
-          <NavItemLink to="group_create" key={2}>Create Group</NavItemLink>
-        </Nav>
-      </Navbar>
-      <this.props.activeRouteHandler />
+      <div style={{"margin-top":20}}>
+      <Grid>
+        <Row>
+        <Navbar>
+          <Nav>
+            <NavItemLink to="dashboard" key={1}>Дэшборд</NavItemLink>
+            <NavItemLink to="group_create" key={2}>Создать группу</NavItemLink>
+          </Nav>
+        </Navbar>
+        </Row>
+        <this.props.activeRouteHandler />
+      </Grid>
       </div>
       );
     }
