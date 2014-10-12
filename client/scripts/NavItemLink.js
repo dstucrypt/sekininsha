@@ -11,7 +11,6 @@ var NavItemLink = React.createClass({
   displayName: 'NavItemLink',
   mixins: [ActiveState, Navigation],
   propTypes: {
-  	activeClassName: React.PropTypes.string.isRequired,
     to: React.PropTypes.string.isRequired,
     params: React.PropTypes.object,
     query: React.PropTypes.object,
@@ -40,7 +39,7 @@ var NavItemLink = React.createClass({
   	var isActive = this.isActive(this.props.to, this.props.params, this.props.query);
   	var props = merge(this.props, {
     	href: this.getHref(),
-      	className: this.getClassName(),
+      	active: isActive,
       	onSelect: this.handleSelect
     });
     return NavItem(props, this.props.children);
