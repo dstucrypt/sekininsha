@@ -44,7 +44,7 @@ var Dashboard = React.createClass({
 
         return (
             <Row>
-                <ListGroup>groups}</ListGroup>
+                <ListGroup>{groups}</ListGroup>
                 <ButtonLink to="group_create">Создать группу</ButtonLink>
             </Row>
                 );
