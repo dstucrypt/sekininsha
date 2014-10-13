@@ -3,12 +3,15 @@
 var React = require('react/addons');
 var PublicAnswer = require('./components/PublicAnswer');
 var ajax = require('./ajax');
+var Table = require('react-bootstrap').Table;
 
 var B = require('react-bootstrap'),
     Grid = B.Grid,
     Row = B.Row,
     Col = B.Col,
-    Button = B.Button;
+    Button = B.Button,
+    Panel = B.Panel,
+    ButtonToolbar = B.ButtonToolbar;
 
 var Vote = React.createClass({
     getInitialState: function() {
@@ -81,13 +84,11 @@ var Vote = React.createClass({
             return (<span>Loading...</span>);
         }
         var buttons = (
-            <Row style={{"padding-bottom":"9px"}}>
-            <Col md={12}>
-                <Button style={{"margin-right": "5px"}} bsStyle="primary" onClick={this.sendVote.bind(null, 'yes')}>Да</Button>
-                <Button style={{"margin-right": "5px"}} bsStyle="primary" onClick={this.sendVote.bind(null, 'no')}>Нет</Button>
-                <Button style={{"margin-right": "5px"}} bsStyle="primary" onClick={this.sendVote.bind(null, 'skip')}>Воздержаться</Button>
-            </Col>
-            </Row>
+            <ButtonToolbar >
+                <Button bsStyle="success" onClick={this.sendVote.bind(null, 'yes')}>Да</Button>
+                <Button bsStyle="danger" onClick={this.sendVote.bind(null, 'no')}>Нет</Button>
+                <Button onClick={this.sendVote.bind(null, 'skip')}>Воздержаться</Button>
+            </ButtonToolbar>
         );
 
         if(this.state.members === null) {
@@ -102,22 +103,28 @@ var Vote = React.createClass({
                 member_votes.push(<PublicAnswer key={key} data={mv} mid={idx} />);
             }
             member_votes = (
-                <table>
+                <Table striped bordered>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th style={{width:"50%"}}>Имя</th>
+                            <th style={{width:"50%"}}>Статус</th>
+                        </tr>
+                    </thead>
                     <tbody>
                     {member_votes}
                     </tbody>
-                </table>
+                </Table>
             )
         }
+        var title = <h1>{vote.title}</h1>;
         return (
-            <div>
-                <h1>{vote.title}</h1>
-                <p>{vote.description}</p>
-                <Grid>
-                    {buttons}
-                </Grid>
+            <Row>
+                <Panel header={title} footer={buttons}>
+                    {vote.description}
+                </Panel>
                 {member_votes}
-            </div>
+            </Row>
         );
     },
 });
