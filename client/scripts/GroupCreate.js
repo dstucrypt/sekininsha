@@ -140,7 +140,7 @@ var App = React.createClass({
         <div className="alert alert-danger" role="alert">{this.state.error} {loginLink}</div>
       ) : undefined;
       return (
-      	<Grid>
+      	<Row>
           {error}
           <Row>
             <Col md={12}>
@@ -162,7 +162,7 @@ var App = React.createClass({
             </Col>
           </Row>
           {buttons}
-      	</Grid>
+      	</Row>
     	);
   	}
 });

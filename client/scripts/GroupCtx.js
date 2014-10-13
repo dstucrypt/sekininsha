@@ -1,12 +1,13 @@
 /** @jsx React.DOM */
 'use strict';
-var React = require('react/addons'),
-    Router = require('react-router');
+var React = require('react/addons');
 
 var ajax = require('./ajax');
 var VoteList = require('./components/VoteList');
 
-var Link = Router.Link;
+var ButtonLink = require('./ButtonLink');
+var Row = require('react-bootstrap').Row;
+var PageHeader = require('react-bootstrap').PageHeader;
 
 var GroupCtx = React.createClass({
     getInitialState: function() {
@@ -43,19 +44,25 @@ var GroupCtx = React.createClass({
         var votes = this.state.votes;
 
         var editlink = (this.state.group.my_role === 'admin') ? (
-            <Link to="group_edit" params={{groupId: gid}}>Edit</Link>
+            <ButtonLink style={{"margin-left":5}} to="group_edit" params={{groupId: gid}}>Edit</ButtonLink>
         ) : undefined;
         if(gid === undefined) {
             return (<span>loading</span>);
         }
         var votelink = this.canSubmitVote() ? (
-            <Link to="vote_create" params={{groupId: gid}}>Create vote</Link>
+            <ButtonLink to="vote_create" params={{groupId: gid}}>Create vote</ButtonLink>
         ) : undefined;
         return (
             <div>
-            <h1>{this.state.group.title}</h1>
-            <span>{editlink}</span> <span>{votelink}</span>
-            <VoteList votes={votes} />
+                <Row>
+                    <h1>{this.state.group.title}{editlink}</h1>
+                </Row>
+                <Row>
+                    <VoteList votes={votes} />
+                </Row>
+                <Row style={{"margin-bottom": 10}}>
+                    {votelink}
+                </Row>
             </div>
         );
     },

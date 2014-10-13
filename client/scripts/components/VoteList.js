@@ -1,6 +1,8 @@
 /** @jsx React.DOM */
 'use strict';
 var React = require('react/addons');
+var ListGroupItem = require('react-bootstrap').ListGroupItem;
+var ListGroup = require('react-bootstrap').ListGroup;
 
 var VoteList = React.createClass({
     render: function() {
@@ -9,15 +11,17 @@ var VoteList = React.createClass({
         var idx;
         for(idx=0; idx<vl; idx++) {
             vote = this.props.votes[idx];
+            console.log(vote);
             key = "vote_" + vote.vote_id;
             key= 'g_' + key;
-            votes.push(<li key={key}>
-                <span>{vote.group_title}</span>&nbsp;
-                <span>{vote.title}</span>
-            </li>);
+            votes.push(
+                <ListGroupItem key={key}>
+                    {vote.title}
+                </ListGroupItem>
+            );
         };
 
-        return <ul>{votes}</ul>
+        return <ListGroup bsStyle={{"margin-bottom":10}}>{votes}</ListGroup>
     }
 });
 
