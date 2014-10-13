@@ -15,9 +15,9 @@ module.exports = {
     "bundle":'./scripts/index'
   },
   output: {
-    path: __dirname,
+    path: './compiled/',
     filename: '[name].js',
-    publicPath: '/scripts/'
+    publicPath: '/static/client/'
   },
   plugins: plugins,
   resolve: {
