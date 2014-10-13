@@ -11,7 +11,6 @@ var VoteList = React.createClass({
         var idx;
         for(idx=0; idx<vl; idx++) {
             vote = this.props.votes[idx];
-            console.log(vote);
             key = "vote_" + vote.vote_id;
             key= 'g_' + key;
             votes.push(
