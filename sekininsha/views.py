@@ -16,6 +16,9 @@ auth = Blueprint('auth', __name__)
 
 @front.before_request
 def new_token():
+    if not current_user.is_authenticated():
+        return
+
     if session.get('vote-token') is None:
         session['vote-token'] = str(uuid4())
 
