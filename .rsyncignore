@@ -1,0 +1,11 @@
+venv
+env
+.git
+client
+Makefile
+requirements.txt
+node_modules
+local.cfg
+*.pyc
+*.pot
+*.po
