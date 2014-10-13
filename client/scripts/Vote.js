@@ -4,6 +4,8 @@ var React = require('react/addons');
 var PublicAnswer = require('./components/PublicAnswer');
 var ajax = require('./ajax');
 var Table = require('react-bootstrap').Table;
+var Router = require('react-router');
+var Link = Router.Link;
 
 var B = require('react-bootstrap'),
     Grid = B.Grid,
@@ -119,12 +121,17 @@ var Vote = React.createClass({
         }
         var title = <h1>{vote.title}</h1>;
         return (
+            <div>
+            <Row>
+                <h1><Link to="group_ctx" params={{groupId: vote.group_id}}>{vote.group_title}</Link></h1>
+            </Row>
             <Row>
                 <Panel header={title} footer={buttons}>
                     {vote.description}
                 </Panel>
                 {member_votes}
             </Row>
+            </div>
         );
     },
 });
