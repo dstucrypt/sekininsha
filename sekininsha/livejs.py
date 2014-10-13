@@ -51,7 +51,7 @@ def script_version(path):
 
 
 def static_js_path(path):
-    path = 'scripts/' + path
+    path = 'client/' + path
     hh = script_version(path)
     return url_for('static', filename=path, _external=True) + '?' + hex(hh)[2:]
 

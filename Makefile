@@ -14,8 +14,8 @@ migrate: setup
 
 ui:
 	cd ./client/ ; make
-	mkdir -p sekininsha/static/scripts/
-	cp client/bundle.js sekininsha/static/scripts/bundle.js
+	mkdir -p sekininsha/static/compiled/
+	rsync client/compiled/ sekininsha/static/compiled/ -auv
 
 deploy: ui
 	rsync ./ app-vote@64.ikari.enodev.org:serve/ --exclude-from=./.rsyncignore -auv
