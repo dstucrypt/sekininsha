@@ -10,6 +10,26 @@ var PublicAnswer = React.createClass({
         // server have no vote answers right now.
         var answer = mv.answer || (mv.user_id !== null ? "?" : "X");
 
+        switch (answer) {
+            case "yes":
+                answer = <span className="glyphicon glyphicon-ok"/>;
+                break;
+            case "no": 
+                answer = "НИЕТ";
+                break;
+            case "skip":
+                answer = "проп";
+                break;
+            case "?":
+                answer = "???";
+                break;
+            case "X":
+                answer = "XXX";
+                break;
+            default:
+                break;
+        };
+
         return (
             <tr>
                 <td>{mid + 1}</td>
