@@ -1,7 +1,8 @@
 from functools import wraps
+from collections import namedtuple
 from flask import jsonify, request, url_for
 from flask.ext.login import current_user
-from .models import Group, Shadow, User, Vote
+from .models import Group, Shadow, User, Vote, VoteAnswer
 
 from . app import app
 
@@ -33,6 +34,9 @@ def add_members(group_id, members):
             ipn=tax_id, email=email,
             group_id=group_id, user=user,
         )
+
+
+VoteShadow = namedtuple('VoteShadow', ['vote', 'shadow'])
 
 
 @app.route('/api/1/group/', methods=['POST'])
@@ -311,4 +315,80 @@ def api_vote_single(vote_id):
     return jsonify(
         status='ok',
         vote=vote.export()
+    )
+
+
+@app.route('/api/1/vote/<int:vote_id>/answers')
+@login_required
+def api_vote_answer_list(vote_id):
+    vote = Vote.query.filter_by(id=vote_id).first()
+    if not vote:
+        return jsonify(status='false', message='No such vote'), 404
+
+    shadow = Shadow.query.filter_by(group_id=vote.group_id,
+                                    user=current_user).first()
+    if shadow is None:
+        return jsonify(status='fail', code='EACCESS'), 403
+
+    
+    voteshadows = {}
+    for shadow in Shadow.query.filter_by(group_id=vote.group_id):
+        voteshadows[shadow.user_id] = VoteShadow(shadow=shadow, vote=None)
+
+    for voteanswer in VoteAnswer.query.filter_by(vote_id=vote.id):
+        voteshadow = voteshadows.get(voteanswer.user_id)
+        if not voteshadow:
+            continue
+
+        voteshadows[voteanswer.user_id] = VoteShadow(
+            shadow=voteshadow.shadow, vote=voteanswer
+        )
+
+    return jsonify(
+        status="ok",
+        answers=[
+            {
+                "name": s.name,
+                "user_id": s.user_id,
+                "answer": v.answer if v else None,
+            }
+            for v, s in voteshadows.values()
+        ]
+    )
+
+@app.route('/api/1/vote/<int:vote_id>/answer', methods=['POST'])
+@login_required
+def api_vote_answer(vote_id):
+    data = request.json
+    db = app.db
+    if data is None:
+        return "ZABORONENO! Send json to this API.", 415
+
+    answer_text = data.get('answer')
+    if not answer_text or answer_text.lower() not in ['yes', 'no', 'skip']:
+        return jsonify(status='error', message='Answer'), 400
+
+    vote = Vote.query.filter_by(id=vote_id).first()
+    if not vote:
+        return jsonify(status='false', message='No such vote'), 404
+
+    shadow = Shadow.query.filter_by(group_id=vote.group_id,
+                                    user=current_user).first()
+    if shadow is None:
+        return jsonify(status='fail', code='EACCESS'), 403
+
+
+    db.session.query(VoteAnswer).filter_by(vote_id=vote_id, user_id=current_user.id).delete()
+    answer = VoteAnswer(vote_id=vote_id,
+                        user_id=current_user.id,
+                        answer=answer_text,
+    )
+    db.session.add(answer)
+
+    db.session.commit()
+
+    return jsonify(
+        status='ok',
+        answer=answer_text,
+        user_id=answer.user_id,
     )

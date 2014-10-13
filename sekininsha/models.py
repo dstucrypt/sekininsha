@@ -146,6 +146,23 @@ class Vote(db.Model):
         return {
             "vote_id": self.id,
             "title": self.name,
+            "description": self.description,
             "group_id": self.group_id,
             "group_title": self.group.name,
         }
+
+
+class VoteAnswer(db.Model):
+    __tablename__ = 'voteanswer'
+    id = db.Column(db.Integer, primary_key=True)
+    answer = db.Column(db.Text())
+
+    vote_id = db.Column(
+        db.Integer, db.ForeignKey('vote.id', ondelete='CASCADE')
+    )
+
+    user_id = db.Column(
+        db.Integer, db.ForeignKey('users.id', ondelete='CASCADE')
+    )
+    user = db.relationship('User')
+    ctime = db.Column(db.DateTime, default=datetime.datetime.now())

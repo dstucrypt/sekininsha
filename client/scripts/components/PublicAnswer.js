@@ -8,7 +8,7 @@ var PublicAnswer = React.createClass({
         var mid = this.props.mid;
         // XXX: making things uo, b/c
         // server have no vote answers right now.
-        var answer = mv.user_id !== null ? "No" : "Skipped";
+        var answer = mv.answer || (mv.user_id !== null ? "?" : "X");
 
         return (
             <tr>
