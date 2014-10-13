@@ -1,10 +1,24 @@
-from flask import request, url_for, g, redirect, render_template, abort
+from uuid import uuid4
+from flask import request, session, g, url_for, Blueprint
+from flask import redirect, render_template, abort
 from flask_oauthlib.client import OAuthException
 from flask.ext.login import login_user, logout_user, login_required, current_user
 from .app import app
 from .models import User, Shadow, Group, Vote
 from .eusign import eusign
 from .fb import fb
+from .api import api
+
+front = Blueprint('front', __name__)
+auth = Blueprint('auth', __name__)
+
+
+@front.before_request
+def new_token():
+    if session.get('vote-token') is None:
+        session['vote-token'] = str(uuid4())
+
+    g.vote_token = session['vote-token']
 
 
 def rapp(name):
@@ -17,7 +31,7 @@ def rapp(name):
         abort(400)
 
 
-@app.route('/')
+@front.route('/')
 @login_required
 def index():
     """Dashboard would be shown here for authenticated user.
@@ -34,25 +48,29 @@ def index():
     return render_template('group_create.html')
 
 
-@app.route('/login')
+@auth.route('/login')
 def login():
     return render_template('login.html')
 
 
-@app.route('/login/<provider>')
+@auth.route('/login/<provider>')
 def go_login(provider):
     remote = rapp(provider)
-    return remote.authorize(callback=url_for('authorized', provider=provider, _external=True))
+    return remote.authorize(callback=url_for('.authorized', provider=provider, _external=True))
 
 
-@app.route('/logout')
+@auth.route('/logout')
 def logout():
+    try:
+        session.pop('vote-token')
+    except KeyError:
+        pass
     logout_user()
     return U"LOGGED OUT"
 
 
-@app.route('/login/authorized')
-@app.route('/login/authorized/<provider>')
+@auth.route('/login/authorized')
+@auth.route('/login/authorized/<provider>')
 def authorized(provider='eusign'):
     remote = rapp(provider)
 
@@ -98,11 +116,12 @@ def authorized(provider='eusign'):
 
     db.session.commit()
     login_user(current_user)
+    session['vote-token'] = str(uuid4())
 
-    return redirect(url_for('index'))
+    return redirect(url_for('front.index'))
 
 
-@app.route('/group/<int:group_id>/')
+@front.route('/group/<int:group_id>/')
 @login_required
 def group(group_id):
     """Group dashboard
@@ -130,7 +149,7 @@ def group(group_id):
     return render_template('group_create.html')
 
 
-@app.route('/vote/<vote_id>/')
+@front.route('/vote/<vote_id>/')
 @login_required
 def vote(vote_id):
     """Vote page
@@ -174,7 +193,7 @@ def vote(vote_id):
 
 
 
-@app.route('/vote/<vote_id>/opinion/<opinion_id>/')
+@front.route('/vote/<vote_id>/opinion/<opinion_id>/')
 @login_required
 def vote_opinion(vote_id, opinion_id):
     """Vote opinion interface
@@ -187,7 +206,7 @@ def vote_opinion(vote_id, opinion_id):
     return "VOTE OPINION"
 
 
-@app.route('/group/create')
+@front.route('/group/create')
 @login_required
 def group_create():
     """Group creation interface
@@ -201,7 +220,7 @@ def group_create():
     return render_template("group_create.html")
 
 
-@app.route('/group/:group_id/edit')
+@front.route('/group/:group_id/edit')
 @login_required
 def group_manage(group_id):
     """Group management interface
@@ -220,7 +239,7 @@ def group_manage(group_id):
     return render_template("group_create.html")
 
 
-@app.route('/group/<group_id>/vote/create')
+@front.route('/group/<group_id>/vote/create')
 @login_required
 def vote_create(group_id):
     """Vote creation interface
@@ -237,3 +256,8 @@ def vote_create(group_id):
         - child groups that can participate
     """
     return render_template('group_create.html')
+
+
+app.register_blueprint(api)
+app.register_blueprint(front)
+app.register_blueprint(auth)

@@ -1,10 +1,11 @@
 from functools import wraps
 from collections import namedtuple, defaultdict
-from flask import jsonify, request, url_for
+from flask import Blueprint, jsonify, request, url_for, session, current_app
 from flask.ext.login import current_user
 from .models import Group, Shadow, User, Vote, VoteAnswer
 
-from . app import app
+
+api = Blueprint('api', __name__, url_prefix='/api/1')
 
 
 def login_required(f):
@@ -12,6 +13,11 @@ def login_required(f):
     def check_login(*args, **kwargs):
         if not current_user.is_authenticated():
             return jsonify(status='error', message="Not logged in", login_url=url_for('login'))
+
+        token = request.headers.get('Vote-Token')
+        need_token = session.get('vote-token')
+        if token is  None or token != need_token:
+            return jsonify(status='error', message='token'), 400
 
         return f(*args, **kwargs)
     return check_login
@@ -39,11 +45,11 @@ def add_members(group_id, members):
 VoteShadow = namedtuple('VoteShadow', ['vote', 'shadow'])
 
 
-@app.route('/api/1/group/', methods=['POST'])
+@api.route('/group/', methods=['POST'])
 @login_required
 def api_group_create():
     data = request.json
-    db = app.db
+    db = current_app.db
     if data is None:
         return "ZABORONENO! Send json to this API.", 415
 
@@ -77,7 +83,7 @@ def api_group_create():
     return jsonify(status='ok', group_id=group.id)
 
 
-@app.route('/api/1/user/<lookup>')
+@api.route('/user/<lookup>')
 def api_user_resolve(lookup):
     uid = None
     if lookup.startswith('tax_id:') or \
@@ -109,7 +115,7 @@ def api_user_resolve(lookup):
     return jsonify(status='ok', user=user)
 
 
-@app.route('/api/1/group/<int:group_id>/members')
+@api.route('/group/<int:group_id>/members')
 @login_required
 def api_group_members_read(group_id):
     shadow = Shadow.query.filter_by(group_id=group_id,
@@ -129,10 +135,10 @@ def api_group_members_read(group_id):
     )
 
 
-@app.route('/api/1/group/<int:group_id>/members', methods=['POST'])
+@api.route('/group/<int:group_id>/members', methods=['POST'])
 @login_required
 def api_group_members_append(group_id):
-    db = app.db
+    db = current_app.db
     data = request.json
     if data is None:
         return "ZABORONENO! Send json to this API.", 415
@@ -186,7 +192,7 @@ def api_group_members_append(group_id):
     )
 
 
-@app.route('/api/1/group/<int:group_id>')
+@api.route('/group/<int:group_id>')
 @login_required
 def api_group_read(group_id):
     shadow = Shadow.query.filter_by(group_id=group_id,
@@ -208,7 +214,7 @@ def api_group_read(group_id):
     )
 
 
-@app.route('/api/1/group/')
+@api.route('/group/')
 @login_required
 def group_list():
     user = current_user._get_current_object()
@@ -231,11 +237,11 @@ def group_list():
     )
 
 
-@app.route('/api/1/vote/', methods=['POST'])
+@api.route('/vote/', methods=['POST'])
 @login_required
 def api_vote_create():
     data = request.json
-    db = app.db
+    db = current_app.db
     if data is None:
         return "ZABORONENO! Send json to this API.", 415
 
@@ -271,7 +277,7 @@ def api_vote_create():
     )
 
 
-@app.route('/api/1/vote/')
+@api.route('/vote/')
 @login_required
 def api_vote_list():
     user = current_user._get_current_object()
@@ -300,7 +306,7 @@ def api_vote_list():
     )
 
 
-@app.route('/api/1/vote/<int:vote_id>')
+@api.route('/vote/<int:vote_id>')
 @login_required
 def api_vote_single(vote_id):
     vote = Vote.query.filter_by(id=vote_id).first()
@@ -318,7 +324,7 @@ def api_vote_single(vote_id):
     )
 
 
-@app.route('/api/1/vote/<int:vote_id>/answers')
+@api.route('/vote/<int:vote_id>/answers')
 @login_required
 def api_vote_answer_list(vote_id):
     vote = Vote.query.filter_by(id=vote_id).first()
@@ -373,11 +379,11 @@ def api_vote_answer_list(vote_id):
         },
     )
 
-@app.route('/api/1/vote/<int:vote_id>/answer', methods=['POST'])
+@api.route('/vote/<int:vote_id>/answer', methods=['POST'])
 @login_required
 def api_vote_answer(vote_id):
     data = request.json
-    db = app.db
+    db = current_app.db
     if data is None:
         return "ZABORONENO! Send json to this API.", 415
 
