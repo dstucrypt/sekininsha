@@ -42,7 +42,7 @@ def script_version(path):
             for chunk in iter(read, ''):
                 hh = zlib.adler32(chunk, hh)
     except IOError as e:
-        logging.error("Either use livejs mode or put compiled files in static/scripts/")
+        logging.error("Either use livejs mode or put compiled files in static/client {}".format(e))
         abort(503)
 
     if app.config['DEBUG'] is not True:
