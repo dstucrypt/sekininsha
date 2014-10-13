@@ -142,6 +142,10 @@ class Vote(db.Model):
     etime = db.Column(db.DateTime, nullable=True)
     dtime = db.Column(db.DateTime, nullable=True)
 
+    @property
+    def state_text(self):
+        return ['running', 'completed', 'archived'][self.state]
+
     def export(self):
         return {
             "vote_id": self.id,
@@ -149,6 +153,7 @@ class Vote(db.Model):
             "description": self.description,
             "group_id": self.group_id,
             "group_title": self.group.name,
+            "state": self.state_text,
         }
 
 

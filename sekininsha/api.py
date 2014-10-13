@@ -1,5 +1,5 @@
 from functools import wraps
-from collections import namedtuple
+from collections import namedtuple, defaultdict
 from flask import jsonify, request, url_for
 from flask.ext.login import current_user
 from .models import Group, Shadow, User, Vote, VoteAnswer
@@ -335,6 +335,7 @@ def api_vote_answer_list(vote_id):
     for shadow in Shadow.query.filter_by(group_id=vote.group_id):
         voteshadows[shadow.user_id] = VoteShadow(shadow=shadow, vote=None)
 
+    va_cnt = 0
     for voteanswer in VoteAnswer.query.filter_by(vote_id=vote.id):
         voteshadow = voteshadows.get(voteanswer.user_id)
         if not voteshadow:
@@ -343,6 +344,14 @@ def api_vote_answer_list(vote_id):
         voteshadows[voteanswer.user_id] = VoteShadow(
             shadow=voteshadow.shadow, vote=voteanswer
         )
+        va_cnt += 1
+
+    stats = defaultdict(lambda : 0)
+    stats['total'] = va_cnt
+    stats['group'] = len(voteshadows)
+    for v, s in voteshadows.values():
+        key = v.answer if v else 'na'
+        stats[key] += 1
 
     return jsonify(
         status="ok",
@@ -353,7 +362,12 @@ def api_vote_answer_list(vote_id):
                 "answer": v.answer if v else None,
             }
             for v, s in voteshadows.values()
-        ]
+        ],
+        stats=stats,
+        quorum=(va_cnt * 2) > len(voteshadows),
+        vote={
+            "state": vote.state_text,
+        },
     )
 
 @app.route('/api/1/vote/<int:vote_id>/answer', methods=['POST'])
