@@ -131,6 +131,7 @@ def group(group_id):
 
 
 @app.route('/vote/<vote_id>/')
+@login_required
 def vote(vote_id):
     """Vote page
 
@@ -174,6 +175,7 @@ def vote(vote_id):
 
 
 @app.route('/vote/<vote_id>/opinion/<opinion_id>/')
+@login_required
 def vote_opinion(vote_id, opinion_id):
     """Vote opinion interface
 
@@ -186,6 +188,7 @@ def vote_opinion(vote_id, opinion_id):
 
 
 @app.route('/group/create')
+@login_required
 def group_create():
     """Group creation interface
 
@@ -198,8 +201,9 @@ def group_create():
     return render_template("group_create.html")
 
 
-@app.route('/group/group_id/manage')
-def group_manage():
+@app.route('/group/:group_id/edit')
+@login_required
+def group_manage(group_id):
     """Group management interface
 
     This page should have interface to
@@ -213,10 +217,11 @@ def group_manage():
             - group admins can start vote
             - quorum and ballout default values
     """
-    return "MANAGE_GROUP"
+    return render_template("group_create.html")
 
 
 @app.route('/group/<group_id>/vote/create')
+@login_required
 def vote_create(group_id):
     """Vote creation interface
 
@@ -232,4 +237,3 @@ def vote_create(group_id):
         - child groups that can participate
     """
     return render_template('group_create.html')
-
