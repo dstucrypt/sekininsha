@@ -17,14 +17,8 @@
   "keywords": [
     "react",
     "reactjs",
-    "boilerplate",
-    "hot",
-    "hot",
-    "reload",
-    "hmr",
-    "live",
-    "edit",
-    "webpack"
+    "webpack",
+    "react-bootstrap"
   ],
   "author": "Dan Abramov <dan.abramov@me.com> (http://github.com/gaearon)",
   "license": "MIT",
