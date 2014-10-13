@@ -346,9 +346,11 @@ def api_vote_answer_list(vote_id):
         )
         va_cnt += 1
 
+    possible = len([1 for v, s in voteshadows.values() if s.user_id])
     stats = defaultdict(lambda : 0)
     stats['total'] = va_cnt
     stats['group'] = len(voteshadows)
+    stats['possible'] = possible
     for v, s in voteshadows.values():
         key = v.answer if v else 'na'
         stats[key] += 1
@@ -365,6 +367,7 @@ def api_vote_answer_list(vote_id):
         ],
         stats=stats,
         quorum=(va_cnt * 2) > len(voteshadows),
+        quorum_possible=(possible * 2) > len(voteshadows),
         vote={
             "state": vote.state_text,
         },
