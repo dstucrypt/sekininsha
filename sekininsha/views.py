@@ -1,6 +1,7 @@
 from uuid import uuid4
 from flask import request, session, g, url_for, Blueprint
 from flask import redirect, render_template, abort
+from flask import json
 from flask_oauthlib.client import OAuthException
 from flask.ext.login import login_user, logout_user, login_required, current_user
 from .app import app
@@ -19,6 +20,10 @@ def new_token():
         session['vote-token'] = str(uuid4())
 
     g.vote_token = session['vote-token']
+    g.json_user = json.dumps({
+        "name": current_user.name,
+        "user_id": current_user.id,
+    })
 
 
 def rapp(name):

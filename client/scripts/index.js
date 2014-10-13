@@ -24,7 +24,9 @@ var Routes = Router.Routes;
 
 var App = React.createClass({
 	render: function() {
-		return  (
+
+        var user = window.current_user;
+        return  (
       <div style={{"margin-top":20}}>
       <Grid>
         <Row>
@@ -32,6 +34,9 @@ var App = React.createClass({
           <Nav>
             <NavItemLink to="dashboard" key={1}>Дэшборд</NavItemLink>
             <NavItemLink to="group_create" key={2}>Создать группу</NavItemLink>
+          </Nav>
+          <Nav pullRight={true} >
+            <NavItem key="current_user">{user.name}</NavItem>
           </Nav>
         </Navbar>
         </Row>
