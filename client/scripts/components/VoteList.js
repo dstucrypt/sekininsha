@@ -1,7 +1,7 @@
 /** @jsx React.DOM */
 'use strict';
 var React = require('react/addons');
-var ListGroupItem = require('react-bootstrap').ListGroupItem;
+var ListGroupLink = require('../ListGroupLink');
 var ListGroup = require('react-bootstrap').ListGroup;
 
 var VoteList = React.createClass({
@@ -14,9 +14,9 @@ var VoteList = React.createClass({
             key = "vote_" + vote.vote_id;
             key= 'g_' + key;
             votes.push(
-                <ListGroupItem key={key}>
+                <ListGroupLink key={key} to="vote" params={{voteId: vote.vote_id}}>
                     {vote.title}
-                </ListGroupItem>
+                </ListGroupLink>
             );
         };
 
