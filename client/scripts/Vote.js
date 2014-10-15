@@ -50,7 +50,7 @@ var Vote = React.createClass({
         }
 
         this.setMemberKeys(resp.answers);
-        this.setState({members: resp.answers});
+        this.setState({members: resp.answers, stats: resp.stats});
     },
     changedAnswer: function(req, resp) {
         if(!resp || (resp & resp.status !== 'ok')) {
@@ -73,6 +73,8 @@ var Vote = React.createClass({
         }
 
         this.setState({members: members});
+        var vid = this.props.params.voteId;
+        ajax('/api/1/vote/' + vid + '/answers', this.haveAnswers);
     },
     sendVote: function(answer) {
         var url = '/api/1/vote/' + this.props.params.voteId + '/answer';
@@ -140,6 +142,7 @@ var Vote = React.createClass({
             }
             for (var i = 0; i < sectors.length; i++) {
                 var n = sectors[i];
+                var key = "pie_"+i;
                 var arc = "0";                  // default is to draw short arc (< 180 degrees)
                 seg = n/total * 360 + seg;      // this angle will be current plus all previous
                 if ((n/total * 360) > 180) {
@@ -149,8 +152,7 @@ var Vote = React.createClass({
                 var nextx = Math.round(Math.cos(radseg) * radius);
                 var nexty = Math.round(Math.sin(radseg) * radius);
                 var d = 'M ' + startx + ',' + starty + ' l ' + lastx + ',' + (-lasty) + ' a' + radius + ',' + radius + ' 0 ' + arc + ',0 ' + (nextx - lastx) + ',' + (-(nexty - lasty)) + ' z';
-                console.log(d);
-                var path = <path d={d} fill={colors[col]} stroke={bordercolor} stroke-width="2" stroke-linejoin="round" />;
+                var path = <path d={d} fill={colors[col]} stroke={bordercolor} stroke-width="2" stroke-linejoin="round" key={key} />;
                 paths.push(path);
                 lastx = nextx;
                 lasty = nexty;
@@ -158,7 +160,12 @@ var Vote = React.createClass({
             }
             return paths;
         }
-        var paths = renderChart([2,5,1,6]);
+        var paths = this.state.stats ? renderChart([
+                this.state.stats.yes || 0,
+                this.state.stats.no || 0,
+                this.state.stats.skip || 0,
+                this.state.stats.na || 0
+        ]) : undefined;
         return (
             <div>
             <Row>
