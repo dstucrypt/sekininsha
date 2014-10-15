@@ -282,6 +282,9 @@ def api_vote_create():
 def api_vote_list():
     user = current_user._get_current_object()
     group_id = request.args.get('group_id')
+    q = current_app.db.session.query(Vote, Group, User)
+    q = q.filter(Group.id == Vote.group_id, User.id == Vote.owner_id)
+
     if group_id:
         try:
             group_id = int(group_id)
@@ -293,16 +296,12 @@ def api_vote_list():
         if shadow is None:
             return jsonify(status='fail', code='EACCESS'), 403
 
-        q = Vote.query.filter_by(group_id=group_id).enable_eagerloads(True)
-    else:
-        q = Vote.query.join(
-            Shadow,
-            Vote.group_id == Shadow.group_id).filter(
-                Shadow.user_id == user.id
-        ).enable_eagerloads(True)
+        q = q.filter(Vote.group_id==group_id)
+
+    q = q.order_by(Vote.id.desc())
     return jsonify(
         status='ok',
-        vote=[vote.export() for vote in q]
+        vote=[vote.export(group, user) for vote, group, user in q]
     )
 
 
