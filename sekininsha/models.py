@@ -146,14 +146,22 @@ class Vote(db.Model):
     def state_text(self):
         return ['running', 'completed', 'archived'][self.state]
 
-    def export(self):
+    def export(self, group=None, owner=None):
+        group = group or self.group
+        owner = owner or self.owner
+        results = ['no', 'yes']
         return {
             "vote_id": self.id,
             "title": self.name,
             "description": self.description,
-            "group_id": self.group_id,
-            "group_title": self.group.name,
+            "group_id": group.id,
+            "group_title": group.name,
+            "owner_id": owner.id,
+            "owner_name": owner.name,
             "state": self.state_text,
+            "ctime": int(self.ctime.strftime('%s')),
+            "ctime_display": self.ctime,
+            "answer": None if self.result is None else results[self.result]
         }
 
 
