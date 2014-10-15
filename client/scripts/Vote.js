@@ -120,6 +120,45 @@ var Vote = React.createClass({
             )
         }
         var title = <h1>{vote.title}</h1>;
+
+        function renderChart(sectors){
+
+            var paths = [];
+            var total = 0,
+                col = 0,
+                seg = 0,
+                radius = 130,
+                startx = 135,  //The screen x-origin: center of pie chart
+                starty = 135,   //The screen y-origin: center of pie chart
+                lastx = radius, //Starting coordinates of 
+                lasty = 0;      //the first arc
+
+            var colors = ['red','blue','yellow','magenta','orange','slateblue','slategrey','greenyellow','wheat']; 
+            var bordercolor = 'black';
+            for (var i = 0; i < sectors.length; i++) {
+                total += sectors[i];
+            }
+            for (var i = 0; i < sectors.length; i++) {
+                var n = sectors[i];
+                var arc = "0";                  // default is to draw short arc (< 180 degrees)
+                seg = n/total * 360 + seg;      // this angle will be current plus all previous
+                if ((n/total * 360) > 180) {
+                    arc = "1"               // just in case this piece is > 180 degrees
+                }
+                var radseg = seg * Math.PI / 180;  // we need to convert to radians for cosine, sine functions
+                var nextx = Math.round(Math.cos(radseg) * radius);
+                var nexty = Math.round(Math.sin(radseg) * radius);
+                var d = 'M ' + startx + ',' + starty + ' l ' + lastx + ',' + (-lasty) + ' a' + radius + ',' + radius + ' 0 ' + arc + ',0 ' + (nextx - lastx) + ',' + (-(nexty - lasty)) + ' z';
+                console.log(d);
+                var path = <path d={d} fill={colors[col]} stroke={bordercolor} stroke-width="2" stroke-linejoin="round" />;
+                paths.push(path);
+                lastx = nextx;
+                lasty = nexty;
+                col++;
+            }
+            return paths;
+        }
+        var paths = renderChart([2,5,1,6]);
         return (
             <div>
             <Row>
@@ -129,7 +168,14 @@ var Vote = React.createClass({
                 <Panel header={title} footer={buttons}>
                     {vote.description}
                 </Panel>
-                {member_votes}
+            </Row>
+            <Row>
+            <Col md={6}>{member_votes}</Col>
+            <Col md={4} mdPush={1}>
+                <p className="text-center"><svg width="270" height="270" xmlns="http://www.w3.org/2000/svg" version="1.1">
+                    {paths}
+                </svg></p>
+            </Col>
             </Row>
             </div>
         );
