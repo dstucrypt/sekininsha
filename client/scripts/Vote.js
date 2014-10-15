@@ -108,9 +108,9 @@ var Vote = React.createClass({
                 <Table striped bordered>
                     <thead>
                         <tr>
-                            <th>#</th>
-                            <th style={{width:"50%"}}>Имя</th>
-                            <th style={{width:"50%"}}>Статус</th>
+                            <th className="col-sm-1">#</th>
+                            <th>Имя</th>
+                            <th className="col-sm-1">Статус</th>
                         </tr>
                     </thead>
                     <tbody>
