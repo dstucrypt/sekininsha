@@ -5,9 +5,10 @@ var Cursor = require('react-cursor/src/Cursor');
 var ajax = require('./ajax');
 var validate = require('./validate');
 
-var Button = require('react-bootstrap/Button');
-
+var Button = require('react-bootstrap').Button;
 var MembersList = require('./components/MembersList');
+var ButtonToolbar = require('react-bootstrap').ButtonToolbar;
+var Row = require('react-bootstrap').Row;
 
 var GroupEdit = React.createClass({
     getInitialState: function() {
@@ -80,20 +81,26 @@ var GroupEdit = React.createClass({
         var members = cursor.refine('members');
         var pending_members = cursor.refine('pending_members');
         var mlen = members.pendingValue().length;
-        var buttons = [
-           <Button bsStyle="primary" style={{"margin-right":"5px"}} onClick={this.addMember.bind(null, pending_members)} key="badd">Добавить</Button>
-        ];
+
+        var pending = null;
+        var can_save = false;
 
         if(pending_members.pendingValue().length > 0) {
-           buttons.push( <Button bsStyle="primary" style={{"margin-right":"5px"}} onClick={this.submit.bind(null, pending_members)} key="bsave">Сохранить</Button>);
+            can_save = true;
+            pending = <Row><MembersList members={pending_members} from_id={mlen}></MembersList></Row>;
         }
+
+        var buttons = [
+            <Button bsStyle="primary" onClick={this.addMember.bind(null, pending_members)} key="badd">Добавить</Button>,
+            <Button disabled={!can_save} bsStyle="primary" onClick={this.submit.bind(null, pending_members)} key="bsave">Сохранить</Button>
+        ];
 
 		return (
             <div>
-                {buttons}
-                <MembersList members={members}></MembersList>
-                <MembersList members={pending_members} from_id={mlen}></MembersList>
-                {buttons}
+                <Row><ButtonToolbar>{buttons}</ButtonToolbar></Row>
+                <Row><MembersList members={members}></MembersList></Row>
+                {pending}
+                <Row><ButtonToolbar>{buttons}</ButtonToolbar></Row>
             </div>
         );
 
