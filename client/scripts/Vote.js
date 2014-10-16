@@ -123,7 +123,32 @@ var Vote = React.createClass({
         }
         var title = <h1>{vote.title}</h1>;
 
-        function renderChart(sectors){
+        function renderChart(stats){
+            if (stats === undefined) return <circle fill="white" r="130" cx="135" cy="135" />
+
+            var sectors = [
+                stats.yes || 0,
+                stats.no || 0,
+                stats.skip || 0,
+                stats.na || 0
+            ];
+
+            var colors = ['#449d44','#d9534f','grey','white'];
+
+
+            var newSectors = [];
+            var newColors = [];
+            for (var i = 0; i < sectors.length; i ++) {
+                if (sectors[i] !== 0) {
+                    newSectors.push(sectors[i]);
+                    newColors.push(colors[i]);
+                }
+            }
+
+            if (newSectors.length === 1) return <circle fill={newColors[0]} r="130" cx="135" cy="135" />
+
+            sectors = newSectors;
+            colors = newColors;
 
             var paths = [];
             var total = 0,
@@ -135,8 +160,7 @@ var Vote = React.createClass({
                 lastx = radius, //Starting coordinates of 
                 lasty = 0;      //the first arc
 
-            var colors = ['red','blue','yellow','magenta','orange','slateblue','slategrey','greenyellow','wheat']; 
-            var bordercolor = 'black';
+            
             for (var i = 0; i < sectors.length; i++) {
                 total += sectors[i];
             }
@@ -152,7 +176,7 @@ var Vote = React.createClass({
                 var nextx = Math.round(Math.cos(radseg) * radius);
                 var nexty = Math.round(Math.sin(radseg) * radius);
                 var d = 'M ' + startx + ',' + starty + ' l ' + lastx + ',' + (-lasty) + ' a' + radius + ',' + radius + ' 0 ' + arc + ',0 ' + (nextx - lastx) + ',' + (-(nexty - lasty)) + ' z';
-                var path = <path d={d} fill={colors[col]} stroke={bordercolor} stroke-width="2" stroke-linejoin="round" key={key} />;
+                var path = <path d={d} fill={colors[col]} key={key} />;
                 paths.push(path);
                 lastx = nextx;
                 lasty = nexty;
@@ -160,12 +184,6 @@ var Vote = React.createClass({
             }
             return paths;
         }
-        var paths = this.state.stats ? renderChart([
-                this.state.stats.yes || 0,
-                this.state.stats.no || 0,
-                this.state.stats.skip || 0,
-                this.state.stats.na || 0
-        ]) : undefined;
         return (
             <div>
             <Row>
@@ -179,9 +197,12 @@ var Vote = React.createClass({
             <Row>
             <Col md={6}>{member_votes}</Col>
             <Col md={4} mdPush={1}>
-                <p className="text-center"><svg width="270" height="270" xmlns="http://www.w3.org/2000/svg" version="1.1">
-                    {paths}
-                </svg></p>
+                <p className="text-center">
+                    <svg width="270" height="270" xmlns="http://www.w3.org/2000/svg" version="1.1">
+                        <circle fill="#ddd" r="131" cx="135" cy="135" />
+                        {renderChart(this.state.stats)}
+                    </svg>
+                </p>
             </Col>
             </Row>
             </div>
