@@ -88,7 +88,7 @@ var Vote = React.createClass({
             return (<span>Loading...</span>);
         }
         var buttons = (
-            <ButtonToolbar >
+            <ButtonToolbar>
                 <Button bsStyle="success" onClick={this.sendVote.bind(null, 'yes')}>Да</Button>
                 <Button bsStyle="danger" onClick={this.sendVote.bind(null, 'no')}>Нет</Button>
                 <Button onClick={this.sendVote.bind(null, 'skip')}>Воздержаться</Button>
@@ -186,25 +186,25 @@ var Vote = React.createClass({
         }
         return (
             <div>
-            <Row>
-                <h1><Link to="group_ctx" params={{groupId: vote.group_id}}>{vote.group_title}</Link></h1>
-            </Row>
-            <Row>
-                <Panel header={title} footer={buttons}>
-                    {vote.description}
-                </Panel>
-            </Row>
-            <Row>
-            <Col md={6}>{member_votes}</Col>
-            <Col md={4} mdPush={1}>
-                <p className="text-center">
-                    <svg width="270" height="270" xmlns="http://www.w3.org/2000/svg" version="1.1">
-                        <circle fill="#ddd" r="131" cx="135" cy="135" />
-                        {renderChart(this.state.stats)}
-                    </svg>
-                </p>
-            </Col>
-            </Row>
+                <Row>
+                    <h1><Link to="group_ctx" params={{groupId: vote.group_id}}>{vote.group_title}</Link></h1>
+                </Row>
+                <Row>
+                    <Panel header={title} footer={buttons}>
+                        {vote.description}
+                    </Panel>
+                </Row>
+                <Row>
+                    <Col md={6}>{member_votes}</Col>
+                    <Col md={4} mdPush={1}>
+                        <p className="text-center">
+                            <svg width="270" height="270" xmlns="http://www.w3.org/2000/svg" version="1.1">
+                                <circle fill="#ddd" r="131" cx="135" cy="135" />
+                                {renderChart(this.state.stats)}
+                            </svg>
+                        </p>
+                    </Col>
+                </Row>
             </div>
         );
     },
