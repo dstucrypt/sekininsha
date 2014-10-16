@@ -228,7 +228,7 @@ def group_create():
     return render_template("group_create.html")
 
 
-@front.route('/group/:group_id/edit')
+@front.route('/group/<int:group_id>/members')
 @login_required
 def group_manage(group_id):
     """Group management interface
