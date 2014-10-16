@@ -1,6 +1,7 @@
 /** @jsx React.DOM */
 'use strict';
 require("bootstrap/dist/css/bootstrap.min.css");
+require("../extras.css");
 
 var React = require('react/addons'),
     GroupCreate = require('./GroupCreate'),
