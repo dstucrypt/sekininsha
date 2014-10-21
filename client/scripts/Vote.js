@@ -125,12 +125,12 @@ var Vote = React.createClass({
         }
         var title = <h1>{vote.title}</h1>;
 
-        var stats = [
+        var stats = this.state.stats ? [
             this.state.stats.yes || 0, 
             this.state.stats.no || 0, 
             this.state.stats.skip || 0, 
             this.state.stats.na || 0
-        ];
+        ] : [];
         
         var colors = [
             '#449d44', 
