@@ -15,6 +15,8 @@ var B = require('react-bootstrap'),
     Panel = B.Panel,
     ButtonToolbar = B.ButtonToolbar;
 
+var SVGPieChart = require('./SVGPieChart')
+
 var Vote = React.createClass({
     getInitialState: function() {
         return {
@@ -123,67 +125,20 @@ var Vote = React.createClass({
         }
         var title = <h1>{vote.title}</h1>;
 
-        function renderChart(stats){
-            if (stats === undefined) return <circle fill="white" r="130" cx="135" cy="135" />
+        var stats = [
+            this.state.stats.yes || 0, 
+            this.state.stats.no || 0, 
+            this.state.stats.skip || 0, 
+            this.state.stats.na || 0
+        ];
+        
+        var colors = [
+            '#449d44', 
+            '#d9534f', 
+            'grey', 
+            'white'
+        ];
 
-            var sectors = [
-                stats.yes || 0,
-                stats.no || 0,
-                stats.skip || 0,
-                stats.na || 0
-            ];
-
-            var colors = ['#449d44','#d9534f','grey','white'];
-
-
-            var newSectors = [];
-            var newColors = [];
-            for (var i = 0; i < sectors.length; i ++) {
-                if (sectors[i] !== 0) {
-                    newSectors.push(sectors[i]);
-                    newColors.push(colors[i]);
-                }
-            }
-
-            if (newSectors.length === 1) return <circle fill={newColors[0]} r="130" cx="135" cy="135" />
-
-            sectors = newSectors;
-            colors = newColors;
-
-            var paths = [];
-            var total = 0,
-                col = 0,
-                seg = 0,
-                radius = 130,
-                startx = 135,  //The screen x-origin: center of pie chart
-                starty = 135,   //The screen y-origin: center of pie chart
-                lastx = radius, //Starting coordinates of 
-                lasty = 0;      //the first arc
-
-            
-            for (var i = 0; i < sectors.length; i++) {
-                total += sectors[i];
-            }
-            for (var i = 0; i < sectors.length; i++) {
-                var n = sectors[i];
-                var key = "pie_"+i;
-                var arc = "0";                  // default is to draw short arc (< 180 degrees)
-                seg = n/total * 360 + seg;      // this angle will be current plus all previous
-                if ((n/total * 360) > 180) {
-                    arc = "1"               // just in case this piece is > 180 degrees
-                }
-                var radseg = seg * Math.PI / 180;  // we need to convert to radians for cosine, sine functions
-                var nextx = Math.round(Math.cos(radseg) * radius);
-                var nexty = Math.round(Math.sin(radseg) * radius);
-                var d = 'M ' + startx + ',' + starty + ' l ' + lastx + ',' + (-lasty) + ' a' + radius + ',' + radius + ' 0 ' + arc + ',0 ' + (nextx - lastx) + ',' + (-(nexty - lasty)) + ' z';
-                var path = <path d={d} fill={colors[col]} key={key} />;
-                paths.push(path);
-                lastx = nextx;
-                lasty = nexty;
-                col++;
-            }
-            return paths;
-        }
         return (
             <div>
                 <Row>
@@ -198,10 +153,7 @@ var Vote = React.createClass({
                     <Col md={6}>{member_votes}</Col>
                     <Col md={4} mdPush={1}>
                         <p className="text-center">
-                            <svg width="270" height="270" xmlns="http://www.w3.org/2000/svg" version="1.1">
-                                <circle fill="#ddd" r="131" cx="135" cy="135" />
-                                {renderChart(this.state.stats)}
-                            </svg>
+                            <SVGPieChart stats={stats} colors={colors} radius={135} border={1}/>
                         </p>
                     </Col>
                 </Row>
