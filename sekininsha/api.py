@@ -86,33 +86,27 @@ def api_group_create():
 @api.route('/user/<lookup>')
 def api_user_resolve(lookup):
     uid = None
-    if lookup.startswith('tax_id:') or \
-       lookup.startswith('email:'):
-        kw = dict((lookup.split(':', 1), ))
+    tax_id, email = None, None
+    if ':' in lookup:
+        k, v = lookup.split(':', 1)
+        if k == 'tax_id':
+            tax_id = v
+        elif k == 'email':
+            email = v
+
+        user = User.resolve(tax_id, email)
     else:
         try:
             uid = int(lookup)
-            kw = {"id": uid}
         except:
             return jsonify(status='error', message="Don't understand"), 404
 
-    if kw.get('email') == 'mustafa@h.tv' or uid == 200:
-        user = {
-            "user_id": 200,
-            "name": "Mustafa Nayem",
-            "have_facebook": True,
-        }
-    elif kw.get('tax_id') == '2952222000' or uid == 201:
-        user = {
-            "user_id": 201,
-            "name": "Mozes CashKing",
-            "have_facebook": True,
-            "have_eusign": True,
-        }
-    else:
+        user = User.query.filter_by({'id': uid}).first()
+
+    if not user:
         return jsonify(status='fail', message='Not found'), 404
 
-    return jsonify(status='ok', user=user)
+    return jsonify(status='ok', user=user.export('resolve'))
 
 
 @api.route('/group/<int:group_id>/members')
