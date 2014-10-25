@@ -129,6 +129,12 @@ def authorized(provider='eusign'):
     return redirect(url_for('front.index'))
 
 
+@front.route('/me/')
+@login_required
+def me():
+    return render_template('group_create.html')
+
+
 @front.route('/group/<int:group_id>/')
 @login_required
 def group(group_id):

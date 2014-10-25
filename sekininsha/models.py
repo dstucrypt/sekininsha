@@ -49,6 +49,15 @@ class User(db.Model):
             return cls(name=data['name'], facebook=data['id'],
                        email=data['email'])
 
+    def export(self, fmt):
+        return {
+            "user_id": self.id,
+            "name": self.name,
+            "tax_id": self.ipn,
+            "email": self.email,
+            "fb": self.facebook,
+        }
+
 
 login_manager.user_loader(User.load_user)
 

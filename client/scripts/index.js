@@ -16,7 +16,8 @@ var React = require('react/addons'),
     NavItemLink = require('./NavItemLink'),
     Grid = require('react-bootstrap/Grid'),
     Row = require('react-bootstrap/Row'),
-    PageHeader = require('react-bootstrap/PageHeader');
+    PageHeader = require('react-bootstrap/PageHeader'),
+    User = require('./User');
 
 
 var Router = require('react-router');
@@ -37,7 +38,7 @@ var App = React.createClass({
             <NavItemLink to="group_create" key={2}>Создать группу</NavItemLink>
           </Nav>
           <Nav pullRight={true} >
-            <NavItem key="current_user">{user.name}</NavItem>
+            <NavItemLink to="user" key="current_user">{user.name}</NavItemLink>
           </Nav>
         </Navbar>
         </Row>
@@ -57,6 +58,7 @@ var routes = (
       <Route name="group_edit" path="/group/:groupId/members" handler={GroupEdit}/>
       <Route name="vote_create" path="/group/:groupId/vote/create" handler={VoteCreate}/>
       <Route name="vote" path="/vote/:voteId/" handler={Vote} />
+      <Route name="user" path="/me/" handler={User} />
     </Route>
   </Routes>
 );

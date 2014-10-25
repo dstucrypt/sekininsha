@@ -414,3 +414,12 @@ def api_vote_answer(vote_id):
         answer=answer_text,
         user_id=answer.user_id,
     )
+
+
+@api.route('/me/')
+@login_required
+def api_me():
+    return jsonify(
+        status='ok',
+        user=current_user.export('me')
+    )
